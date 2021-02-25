@@ -31,14 +31,14 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    #'django.contrib.admin',
+    # 'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'web.apps.WebConfig',
-    'api.apps.ApiConfig',
+    'web',
+    'api',
     'rest_framework'
 ]
 
@@ -122,5 +122,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+#redis
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
+import redis
+REDIS_INSTANCE = redis.Redis(host=REDIS_HOST,port=REDIS_PORT, db=0)

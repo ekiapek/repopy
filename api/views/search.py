@@ -4,10 +4,9 @@ import os
 from redisearch import *
 import redisearch.aggregation as aggregations
 import redisearch.reducers as reducers
-import redis
-from api.models.ResponseModel import ResponseModel
+from api.models.ApiModel import ResponseModel
 
-redis_instance = redis.Redis(host=settings.REDIS_HOST,port=settings.REDIS_PORT, db=0)
+redis_instance = settings.REDIS_INSTANCE
 client = None
 
 def searchSuggest(request):
