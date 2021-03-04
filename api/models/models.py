@@ -7,6 +7,7 @@ class Repositories(models.Model):
     RepositoryName = models.CharField(max_length=255,null=True)
     RepositoryBaseDir = models.TextField(null=True)
     ImportedDate = models.DateTimeField(null=True)
+    LastIndexed = models.DateTimeField(null=True)
 
 class Settings(models.Model):
     SettingID = models.CharField(primary_key=True, max_length=40)
