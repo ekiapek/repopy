@@ -1,9 +1,10 @@
+import jsons
 from redisearch import Client,IndexDefinition,TextField,TagField
 from redisgraph import Node, Edge, Graph, Path
-from .RepositoryModel import ClassModel, IndexedRepositoryModel,RepositoryModel,ParentClassModel,DocumentModel
+from logic.RepositoryModel import ClassModel, IndexedRepositoryModel,RepositoryModel,ParentClassModel,DocumentModel
 import uuid
 
-def indexer(repo=None, redisConn=None):
+def indexRepo(repo=None, redisConn=None):
     """
     do indexing on repository object with redisConn connection
     """
@@ -15,10 +16,11 @@ def indexer(repo=None, redisConn=None):
             client = Client(repo.RepositoryName,conn=redisConn)
             graph = Graph(graphName,redisConn)
 
-            client.create_index(
+            client.create_index((
                 TextField("DocumentName",no_stem=True),
-                TextField("Content"),
-                TagField("Classes",weight=2)
+                TextField("Content",weight=1),
+                TextField("Classes",weight=2)), 
+                definition=IndexDefinition(prefix=['doc:'])
             )
 
             classes = []
@@ -33,20 +35,25 @@ def indexer(repo=None, redisConn=None):
                     classes.append(classModel)
                     for parent in classModel.Parents:
                         classes_in_doc.append(parent.Name)
-                
-                strClassInDoc = ','.join(classes_in_doc)
-                client.redis.hset(str(docID),
-                    mapping={
-                        'DocumentName' : doc.DocumentName,
-                        'Content' : content,
-                        'Classes' : strClassInDoc
-                    }
+                # print(str(docID))
+                # jsons.dumps(doc)
+                strClassInDoc = " ".join(classes_in_doc)
+                client.add_document("doc:"+str(docID),
+                        DocumentName = doc.DocumentName,
+                        Content = content,
+                        Classes = strClassInDoc,
+                        replace=True
+                    # mapping={
+                    #     'DocumentName' : doc.DocumentName,
+                    #     'Content' : content,
+                    #     'Classes' : strClassInDoc
+                    # }
                 )
             
             #creating class relations
             for doc in _repo.Documents:
                 for classModel in doc.Classes:
-                    baseClass = Node(label = classModel.Name, properties = {
+                    baseClass = Node(label = "Class", properties = {
                         'ClassName': classModel.Name,
                         'Type' : classModel.Type,
                         'LineNo' : classModel.LineNo,
@@ -55,27 +62,29 @@ def indexer(repo=None, redisConn=None):
                     graph.add_node(baseClass)
 
                     for parent in classModel.Parents:
-                        x = filter(lambda y: y.Name == parent.Name, classes)
+                        x = list(filter(lambda y: y.Name == parent.Name and parent.type != "attribute", classes))
                         if(len(x)>0):
                             for i in x:
-                                parentClass = Node(label = i.Name, properties = {
+                                print(i.Name+" "+i.Type+" "+str(i.LineNo)+" "+str(i.ColOffset))
+                                parentClass = Node(label = "Class", properties = {
                                     'ClassName': i.Name,
                                     'Type' : i.Type,
                                     'LineNo' : i.LineNo,
                                     'ColOffset' : i.ColOffset
                                 })
                                 graph.add_node(parentClass)
-                                relation = Edge(parentClass,'parent-of',baseClass)
+                                relation = Edge(parentClass,'parentOf',baseClass)
                                 graph.add_edge(relation)
                         else:
-                            parentClass = Node(label = parent.Name, properties = {
+                            print(parent.Name+" "+parent.Type)
+                            parentClass = Node(label = "Class", properties = {
                                 'ClassName': parent.Name,
                                 'Type' : parent.Type,
                                 'LineNo' : '',
                                 'ColOffset' : ''
                             })
                             graph.add_node(parentClass)
-                            relation = Edge(parentClass,'parent-of',baseClass)
+                            relation = Edge(parentClass,'parentOf',baseClass)
                             graph.add_edge(relation)
             graph.commit()
 

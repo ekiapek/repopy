@@ -1,7 +1,7 @@
 from os.path import basename
 import astroid
 import glob
-from .RepositoryModel import ClassModel,RepositoryModel,ParentClassModel,DocumentModel
+from logic.RepositoryModel import ClassModel,RepositoryModel,ParentClassModel,DocumentModel
 import os
 import jsonpickle
 
