@@ -8,6 +8,7 @@ class DocumentModel:
     def __init__(self):
         self.DocumentName = None
         self.DocumentPath = None
+        self.Imports = []
         self.Classes = []
 
 class ClassModel:
@@ -27,3 +28,9 @@ class IndexedRepositoryModel:
     def __init__(self):
         self.RediSearchClient = None
         self.RedisGraphClient = None
+
+class ImportModuleModel:
+    def __init__(self):
+        self.ModulePackageName = None
+        self.ModuleName = None
+        self.ModuleAliasName = None
