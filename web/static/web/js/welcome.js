@@ -1,11 +1,11 @@
-var API_URL = "http://localhost:8000/api/"
-var BASE_URL = "http://localhost:8000/"
-var RESPONSE_SUCCESS = "0"
-var RESPONSE_ERROR = "9"
+var API_URL = "http://localhost:8000/api/";
+var BASE_URL = "http://localhost:8000/";
+var RESPONSE_SUCCESS = "0";
+var RESPONSE_ERROR = "9";
 
 $(document).ready(function() {
     $('#get-started').click(function() {
-        window.location.replace(BASE_URL + "welcome/create-repo/")
+        window.location.replace(BASE_URL + "welcome/create-repo/");
     });
 
     $('#select-file-btn').click(function() {
@@ -73,7 +73,7 @@ function uploadRepo(event){
         enctype: 'multipart/form-data',
         success: function(response) {
             // response = JSON.parse(data);
-            if(response.ResponseCode == "0"){
+            if(response.ResponseCode == RESPONSE_SUCCESS){
                 $('#upload-loader').hide();
                 $('#upload-check').show();
                 repoID = response.ResponseMessage;

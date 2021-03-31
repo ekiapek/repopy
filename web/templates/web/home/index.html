@@ -1,23 +1,59 @@
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    {%load static%}
-    <script src="{% static 'web/js/main.js' %}"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
-    {%load static%}
-    <link rel="stylesheet" href="{% static 'web/css/Footer-Basic.css' %}">
-    {%load static%}
-    <link rel="stylesheet" href="{% static 'web/css/Highlight-Blue.css' %}">
-    {%load static%}
-    <link rel="stylesheet" href="{% static 'web/css/styles.css' %}">
-    <title>RepoPy - Search in Python Repository</title>
-  </head>
-  <body>
-    <div id="main"></div>    
-    <!-- <h1>Hello!</h1>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  {%load static%}
+  <script src="{% static 'web/js/main.js' %}"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+  {%load static%}
+  <link rel="stylesheet" href="{% static 'web/css/Footer-Basic.css' %}">
+  {%load static%}
+  <link rel="stylesheet" href="{% static 'web/css/Highlight-Blue.css' %}">
+  {%load static%}
+  <link rel="stylesheet" href="{% static 'web/css/styles.css' %}">
+  <title>RepoPy - Search in Python Repository</title>
+</head>
+
+<body>
+  <div id="main">
+    <div class="d-flex flex-column align-items-center justify-content-center" style="height: 100vh;">
+      <div class="mb-4">
+        {%load static%}
+        <img src="{%static 'web/images/repopy-logo.svg'%}" style="width: auto;height:10vh;">
+      </div>
+      <div class="loader">
+        <div class="loaderBar"></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- <h1>Hello!</h1>
     <p><i>Future page loader</i></p> -->
-  </body>
+</body>
+<script>
+  $(document).ready(function(){
+    $.ajax({
+      url: API_URL + "repository/GetLatestIndexedRepository/",
+      method: "GET",
+      success: function(data){
+        if(data.ResponseCode == RESPONSE_SUCCESS){
+          repository = data.ResponseObject;
+          window.location.replace(BASE_URL + "repository/" + repository.RepositoryID);
+        }
+        else if(data.ResponseCode == NO_REPOSITORY_FOUND){
+          window.location.replace(BASE_URL + "welcome/");
+        }
+        else{
+
+        }
+      }
+    })
+  });
+</script>
+
 </html>

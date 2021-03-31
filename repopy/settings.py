@@ -127,6 +127,7 @@ STATIC_URL = '/static/'
 #Constant Variables
 RESPONSE_SUCCESS = "0"
 RESPONSE_ERROR = "9"
+NO_REPOSITORY_FOUND = "5"
 REPO_BASE_PATH = "RepoPy"
 REPO_RAW_PATH = "raw-repositories"
 REPO_EXTRACTED_PATH = "repositories"

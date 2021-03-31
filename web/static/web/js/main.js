@@ -1,6 +1,8 @@
-var API_URL = "http://localhost:8000/api/"
-var RESPONSE_SUCCESS = "0"
-var RESPONSE_ERROR = "9"
+var API_URL = "http://localhost:8000/api/";
+var BASE_URL = "http://localhost:8000/";
+var RESPONSE_SUCCESS = "0";
+var RESPONSE_ERROR = "9";
+var NO_REPOSITORY_FOUND = "5";
 
 $( document ).ready(function() {
     $('#btn-search').click(function(){

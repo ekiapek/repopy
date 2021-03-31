@@ -106,7 +106,8 @@ def repoUpload(request):
 
                     response = ResponseModel()
                     response.ResponseCode = RESPONSE_SUCCESS
-                    response.ResponseMessage = str(repository.RepositoryID)
+                    response.ResponseMessage = "OK"
+                    response.ResponseObject = str(repository.RepositoryID)
                     retrmodel = jsons.dump(response)
                     return JsonResponse(retrmodel,safe=False)
                 else:

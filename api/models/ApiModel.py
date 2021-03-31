@@ -6,6 +6,7 @@ class ResponseModel():
     def __init__(self):
         self.ResponseCode = None
         self.ResponseMessage = None
+        self.ResponseObject = None
 
 class SearchModel():
     def __init__(self,query,repoID):
@@ -23,3 +24,12 @@ class ErrorModel:
         self.Trace = trace
         self.Module = module
         self.Created = datetime.now(tz=pytz.timezone('Asia/Jakarta')).strftime("%Y-%m-%d %H:%M:%S")
+
+class Repositories():
+    def __init__(self):
+        self.RepositoryID = None
+        self.RepositoryName = None
+        self.RepositoryBaseDir = None
+        self.ImportedDate = None
+        self.LastIndexed = None
+       
