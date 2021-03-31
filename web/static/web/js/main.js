@@ -1,5 +1,5 @@
-var API_URL = "http://localhost:8000/api/";
-var BASE_URL = "http://localhost:8000/";
+var API_URL = "http://127.0.0.1:8000/api/";
+var BASE_URL = "http://127.0.0.1:8000/";
 var RESPONSE_SUCCESS = "0";
 var RESPONSE_ERROR = "9";
 var NO_REPOSITORY_FOUND = "5";
