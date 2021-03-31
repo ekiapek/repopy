@@ -99,4 +99,4 @@ def parseCode(base_dir,repository_name):
     
     return repo
 
-parseCode("C:\\Users\\ASUS\\Documents\\repopy\\","asd")
+# parseCode("C:\\Users\\ASUS\\Documents\\repopy\\","asd")
