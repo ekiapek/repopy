@@ -1,10 +1,11 @@
 from datetime import datetime
 import pytz
+from django import forms
 
 class ResponseModel():
-    def __init__(self,code,message):
-        self.ResponseCode = code
-        self.ResponseMessage = message
+    def __init__(self):
+        self.ResponseCode = None
+        self.ResponseMessage = None
 
 class SearchModel():
     def __init__(self,query,repoID):

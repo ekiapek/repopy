@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>repopy-welcome</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+    {%load static%}
+    <link rel="stylesheet" href="{% static 'web/css/Footer-Basic.css' %}">
+    {%load static%}
+    <link rel="stylesheet" href="{% static 'web/css/Highlight-Blue.css' %}">
+    {%load static%}
+    <link rel="stylesheet" href="{% static 'web/css/styles.css' %}">
+    {%load static%}
+    <script src="{% static 'web/js/welcome.js' %}"></script>
+</head>
+
+<body>
+    <section class="d-xl-flex align-items-center align-content-center justify-content-xl-center" style="height: 25vh;width: AUTO;">
+        {%load static%}
+        <img class="img-fluid" src="{% static 'web/images/repopy-logo.svg' %}" width="27%" height="auto" alt="repopy-logo" style="margin: 5%;margin-top: 9%;">
+    </section>
+    <section class="highlight-blue" style="background: rgb(255,255,255);height: 55vh;width: auto;">
+        <div class="container" style="text-align: center;">
+            <div class="intro">
+                <h2 class="text-center" style="color: rgb(75,75,75);font-size: 8VH;">Welcome</h2>
+                <p class="text-center" style="color: rgb(130,130,130);font-size: 1.8VH;">Nunc luctus in metus eget fringilla. Aliquam sed justo ligula. Vestibulum nibh erat, pellentesque ut laoreet vitae. </p>
+            </div><button id="get-started" class="btn btn-dark black-btn" type="button" style="min-width: 192.2px;min-height: 64px;">GET STARTED!</button>
+        </div>
+    </section>
+    <footer class="footer-basic" style="height: 20vh;">
+        <div class="social"><a href="github.com/ekiapek"><i class="icon ion-social-github"></i></a></div>
+        <p class="copyright">RepoPy © 2021</p>
+    </footer>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+    
+</body>
+
+</html>

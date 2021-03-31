@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>repopy-welcome</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+    {%load static%}
+    <link rel="stylesheet" href="{% static 'web/css/Footer-Basic.css' %}">
+    {%load static%}
+    <link rel="stylesheet" href="{% static 'web/css/Highlight-Blue.css' %}">
+    {%load static%}
+    <link rel="stylesheet" href="{% static 'web/css/styles.css' %}">
+    {%load static%}
+    <script src="{% static 'web/js/welcome.js' %}"></script>
+    <script>
+        $(document).ready(function(){
+            $('#change-file-btn').hide();
+            $('#filename-placeholder').hide();
+            $('#progress-create').hide();
+            $('#upload-loader').hide();
+            $('#indexing-loader').hide();
+            $('#upload-check').hide();
+            $('#indexing-check').hide();
+            $('#errormsg-file').hide();
+            $('#errormsg-name').hide();
+        });
+    </script>
+</head>
+
+<body>
+    <section class="d-xl-flex align-items-center align-content-center justify-content-xl-center" style="height: 25vh;width: AUTO;">
+        {%load static%}
+        <img class="img-fluid" src="{% static 'web/images/repopy-logo.svg' %}" width="27%" height="auto" alt="repopy-logo" style="margin: 5%;margin-top: 9%;">
+    </section>
+    <section id="content-section" class="highlight-blue" style="background: rgb(255,255,255);width: auto;min-height: 55vh;">
+        <div id="content" class="container text-center" style="text-align: center;">
+            <div class="intro" style="height: auto;max-width: 70%;">
+                <h2 class="text-center" style="color: rgb(75,75,75);font-size: 8VH;width: 100%;">Create your repository</h2>
+                <p class="text-center" style="color: rgb(130,130,130);font-size: 1.8VH;">Nunc luctus in metus eget fringilla. Aliquam sed justo ligula. Vestibulum nibh erat, pellentesque ut laoreet vitae. </p>
+            </div>
+            <div style="height: 20%;">
+                <h4 class="text-dark" style="margin-bottom: 20px;">Step 1. Enter repository name</h4>
+                <form id="create-repo-form" enctype="multipart/form-data">
+                <input required="required" id="repo-name" class="border rounded-pill shadow-sm form-control-lg" type="text" style="height: 30%;font-size: 30px;border-top-left-radius: -25%;border-top-right-radius: -25%;border-bottom-right-radius: -25%;border-bottom-left-radius: -25%;border-style: solid;width: 50%;text-align: center;margin-bottom: 29px;" name="repo-name">
+                <p id="errormsg-name" class="errormsg"></p>
+                <h4 class="text-dark" style="margin-bottom: 20px;">Step 2. Upload your repository. (we only accept compressed zip file)</h4>
+                <div>
+                    <p id="filename-placeholder" class="text-dark">Filename placeholder</p>
+                    <button id="select-file-btn" class="btn btn-info" type="button">Select files..</button>
+                    <input id="file-input" type="file" name="file" style="display: none;" />
+                    <button id="change-file-btn" class="btn btn-warning" type="button">Change</button>
+                    <p id="errormsg-file" class="errormsg"></p>
+                </div>
+                </form>
+            </div>
+            <button id="back-btn" class="btn btn-dark black-btn" type="button" style="min-width: 135.2px;min-height: 54px;">&lt; BACK</button>
+            <button id="next-btn" class="btn btn-dark black-btn" type="button" style="min-width: 135.2px;min-height: 54px;">NEXT &gt;</button>
+        </div>
+
+        <div id="progress-create" class="container text-center" style="text-align: center;">
+            <div class="intro" style="height: auto;max-width: 70%;">
+                <h2 class="text-center" style="color: rgb(75,75,75);font-size: 8VH;width: 100%;margin-bottom: 50px;">Processing Repository...</h2>
+            </div>
+            <div style="height: 20%;">
+                <div id="upload-status" class="status">
+                    <span class="my-auto mx-auto text-dark h4" style="margin-bottom: 20px;">Uploading repository</span>
+                    <span id="upload-loader" class="my-auto spinner-border text-primary" role="status">
+                        <!-- <span class="sr-only">Loading...</span> -->
+                    </span>
+                    <svg id="upload-check" xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="green" class="bi bi-check mb-3" viewBox="0 0 16 16">
+                        <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/>
+                      </svg>
+                </div>
+                
+                <div id="indexing-status" class="mx-auto status">
+                    <span class="my-auto mx-auto text-dark h4" style="margin-bottom: 20px;">Indexing repository</span>
+                    <span id="indexing-loader" class="my-auto spinner-border text-primary" role="status">
+                        <!-- <span class="sr-only">Loading...</span> -->
+                    </span>
+                    <svg id="indexing-check" xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="green" class="bi bi-check mb-3" viewBox="0 0 16 16">
+                        <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/>
+                      </svg>
+                </div>
+                
+            </div><button class="btn btn-success" type="button" style="font-size: 17px;background: var(--success);box-shadow: 0px 3px 6px 0px rgba(0,0,0,0.2);border-radius: 37px;border-top-left-radius: -25%;border-top-right-radius: -25%;border-bottom-right-radius: -25%;border-bottom-left-radius: -25%;border-style: none;font-weight: 600;padding: 0px;margin: 46px;padding-top: 0;padding-right: 0;padding-bottom: 0;padding-left: 0;min-width: 192.2px;min-height: 64px;">FINISH</button>
+        </div>
+    </section>
+    <footer class="footer-basic" style="height: 20vh;">
+        <div class="social"><a href="github.com/ekiapek"><i class="icon ion-social-github"></i></a></div>
+        <p class="copyright">RepoPy © 2021</p>
+    </footer>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script> -->
+</body>
+
+</html>

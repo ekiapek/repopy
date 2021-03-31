@@ -1,0 +1,89 @@
+.black-btn {
+  font-size: 17px;
+  border-radius: 37px;
+  border-top-left-radius: -25%;
+  border-top-right-radius: -25%;
+  border-bottom-right-radius: -25%;
+  border-bottom-left-radius: -25%;
+  border-style: none;
+  font-weight: 600;
+  padding: 0px;
+  margin: 46px;
+  padding-top: 0;
+  padding-right: 0;
+  padding-bottom: 0;
+  padding-left: 0;
+  background: rgb(65, 65, 65);
+  box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.2);
+}
+
+.black-btn:hover{
+    background: rgb(90, 90, 90);
+}
+.tab .nav-tabs{
+    background: #fff;
+}
+.tab .nav-tabs li{
+    text-align: center;
+    margin-right: 3px;
+}
+.tab .nav-tabs li a{
+    font-size: 15px;
+    font-weight: 600;
+    color: #22272c;
+    padding: 15px 25px;
+    background: #eee;
+    margin-right: 0;
+    border-radius: 0;
+    border: none;
+    text-transform: uppercase;
+    position: relative;
+    transition: all 0.5s ease 0s;
+}
+.tab .nav-tabs li.active a,
+.tab .nav-tabs li a:hover{
+    background: #358ccb;
+    color: #fff;
+    border: none;
+}
+.tab .tab-content{
+    font-size: 15px;
+    color: #3d3537;
+    line-height: 30px;
+    padding: 30px 40px;
+    border-top: 3px solid #358ccb;
+}
+.tab .tab-content h3{
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 0;
+}
+
+.code-container{
+    background-color: #358ccb;
+}
+
+code{
+    margin:0;
+    padding:0;
+}
+
+.code-title{
+    height: 6%;
+    margin:0px;
+    padding-left: 15px;
+    padding-top: 3px;
+    color: white;
+}
+
+/* .status{
+    margin: 5px;
+} */
+
+.status span{
+    margin: 10px;
+}
+
+.errormsg{
+    color:rgb(204, 35, 35)!important;
+}

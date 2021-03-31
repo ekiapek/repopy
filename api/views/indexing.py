@@ -1,23 +1,35 @@
+from datetime import datetime
+from os import path
+from repopy.settings import REPO_BASE_PATH, REPO_EXTRACTED_PATH, REPO_RAW_PATH, RESPONSE_ERROR, RESPONSE_SUCCESS
 from django import conf
 from django.http import HttpResponse,JsonResponse
 from django.conf import settings
 from django.http.response import HttpResponseNotAllowed, HttpResponseServerError
 from api.models.ApiModel import ResponseModel,RepositoryIndexRequestModel,ErrorModel
+from api.models import Repositories
 from django.conf import settings
 from logic import parser
 from logic import indexer as idx
 import jsons
 import logging
 import traceback
+from os.path import expanduser
+from django.views.decorators.csrf import csrf_exempt
+import zipfile
+import magic
+import uuid
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+import os
 
 redis = settings.REDIS_INSTANCE
-def indexer(request):
+def indexRepoDirectory(request):
     if (request.method == "POST"):
         if(request.POST != None):
             repoModel = jsons.loads(request.body,RepositoryIndexRequestModel)
             try:
                 parsedRepo = parser.parseCode(repoModel.RepositoryPath,repoModel.RepositoryName)
-                indexedRepo = idx.indexRepo(parsedRepo,redis)
+                # indexedRepo = idx.indexRepo(parsedRepo,redis)
                 retrmodel = jsons.dump(parsedRepo)
                 return JsonResponse(retrmodel,safe=False)
             except Exception as e:
@@ -28,6 +40,95 @@ def indexer(request):
                 print(retrmodelerr)
                 return HttpResponseServerError()
                 # return JsonResponse(retrmodelerr,safe=False)
+
+    else:
+        return HttpResponseNotAllowed("Not Allowed!")
+
+def indexRepo(request):
+    if (request.method == "POST"):
+        if(request.POST != None):
+            repoID = uuid.UUID(request.POST.get("RepositoryID"))
+            repoModel = Repositories.objects.get(RepositoryID=repoID)
+            if(repoModel != None):
+                try:
+                    parsedRepo = parser.parseCode(repoModel.RepositoryBaseDir,repoModel.RepositoryName)
+                    # indexedRepo = idx.indexRepo(parsedRepo,redis)
+                    retrmodel = jsons.dump(parsedRepo)
+                    return JsonResponse(retrmodel,safe=False)
+                except Exception as e:
+                    errmsg = traceback.format_exc(limit=1)
+                    tb = traceback.format_tb(e.__traceback__)
+                    err = ErrorModel(msg=errmsg, trace=tb,module="Indexer")
+                    retrmodelerr = jsons.dump(err)
+                    print(retrmodelerr)
+                    return HttpResponseServerError()
+                    # return JsonResponse(retrmodelerr,safe=False)
+
+    else:
+        return HttpResponseNotAllowed("Not Allowed!")
+
+# @csrf_exempt
+def repoUpload(request):
+    if (request.method == "POST"):
+        if(request.FILES != None):
+            userHome = expanduser("~")
+            rawFileDestinationPath = path.join(userHome, REPO_BASE_PATH, REPO_RAW_PATH,'')
+            extractedDirectoryPath = path.join(userHome, REPO_BASE_PATH, REPO_EXTRACTED_PATH)
+            try:
+                uploadedFile = request.FILES.get("RepoFile")
+                filename = request.FILES.get("RepoFile").name
+                filetypeFromName = filename.split('.')
+                generatedName = str(uuid.uuid4())
+                newFileName = generatedName +"."+ filetypeFromName[-1]
+                pathSave = default_storage.save(rawFileDestinationPath+newFileName,ContentFile(filename,filename))
+
+                with default_storage.open(pathSave, 'wb+') as destination:
+                     #move uploaded file to raw folder destination as chunk
+                    for chunk in uploadedFile.chunks():
+                        destination.write(chunk)
+                
+                # check if zip file
+                fileType = magic.from_buffer(open(rawFileDestinationPath + newFileName,"rb").read(2048))
+
+                if ("zip" in fileType.lower()):             
+                   
+                    #unzip file to extracted path
+                    with zipfile.ZipFile(rawFileDestinationPath + newFileName, 'r') as zip_ref:
+                        zip_ref.extractall(path.join(extractedDirectoryPath,generatedName))
+
+                    #insert repository to database
+                    repository = Repositories()
+                    repository.RepositoryName = request.POST.get("RepositoryName")
+                    repository.RepositoryBaseDir = path.join(extractedDirectoryPath,generatedName,'')
+                    repository.ImportedDate = datetime.now()
+                    repository.RepositoryID = uuid.UUID(generatedName)
+                    repository.save()
+
+                    response = ResponseModel()
+                    response.ResponseCode = RESPONSE_SUCCESS
+                    response.ResponseMessage = str(repository.RepositoryID)
+                    retrmodel = jsons.dump(response)
+                    return JsonResponse(retrmodel,safe=False)
+                else:
+                    os.remove(rawFileDestinationPath+newFileName)
+                    response = ResponseModel()
+                    response.ResponseCode = RESPONSE_ERROR
+                    response.ResponseMessage = "Filetype not allowed"
+                    retrmodel = jsons.dump(response)
+                    return JsonResponse(retrmodel,safe=False)
+                
+
+            except Exception as e:
+                response = ResponseModel()
+                response.ResponseCode = RESPONSE_ERROR
+                response.ResponseMessage = "Upload error"
+                errmsg = traceback.format_exc(limit=1)
+                tb = traceback.format_tb(e.__traceback__)
+                err = ErrorModel(msg=errmsg, trace=tb,module="Indexer")
+                retrmodelerr = jsons.dump(err)
+                print(retrmodelerr)
+                retrmodel = jsons.dump(response)
+                return JsonResponse(retrmodel,safe=False)
 
     else:
         return HttpResponseNotAllowed("Not Allowed!")

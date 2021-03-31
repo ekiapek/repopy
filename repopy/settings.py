@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,7 @@ SECRET_KEY = '+^chs(6v44g1qn4v!m^l)somff56xoie1ik4_$i5btbmn_ld*-'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.8.2','localhost','127.0.0.1']
 
 
 # Application definition
@@ -46,7 +47,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     # 'django.middleware.security.SecurityMiddleware',
     # 'django.contrib.sessions.middleware.SessionMiddleware',
-    # 'django.middleware.common.CommonMiddleware',
+    'django.middleware.common.CommonMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
     # 'django.contrib.auth.middleware.AuthenticationMiddleware',
     # 'django.contrib.messages.middleware.MessageMiddleware',
@@ -122,6 +123,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+#Constant Variables
+RESPONSE_SUCCESS = "0"
+RESPONSE_ERROR = "9"
+REPO_BASE_PATH = "RepoPy"
+REPO_RAW_PATH = "raw-repositories"
+REPO_EXTRACTED_PATH = "repositories"
+APPEND_SLASH = True
+MEDIA_ROOT = os.path.join(os.path.expanduser("~"), REPO_BASE_PATH)
 
 #redis
 REDIS_HOST = '192.168.8.105'
