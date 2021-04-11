@@ -8,5 +8,8 @@ urlpatterns = [
     path(r'indexing/IndexRepo/', indexing.indexRepo),
     path(r'indexing/UploadRepository/', indexing.repoUpload),
     path(r'files/Get/', files.getFile),
-    path(r'repository/GetLatestIndexedRepository/', repository.getLatestIndexedRepository)
+    path(r'files/GetFilesInRepository/', files.getFilesInRepo),
+    path(r'repository/GetLatestIndexedRepository/', repository.getLatestIndexedRepository),
+    path(r'repository/GetRepository/<str:repositoryID>/', repository.getRepository)
+    
 ]

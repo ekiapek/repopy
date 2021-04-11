@@ -32,4 +32,17 @@ class Repositories():
         self.RepositoryBaseDir = None
         self.ImportedDate = None
         self.LastIndexed = None
-       
+
+class FileNodeModel():
+    def __init__(self):
+        self.id = None
+        self.parent = None
+        self.text = None
+        # self.state = {
+        #     'opened':'false',
+        #     'disable':'false',
+        #     'selected':'false'
+        # }
+        self.icon = None
+        self.li_attr = []
+        self.a_attr = []

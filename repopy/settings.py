@@ -133,9 +133,22 @@ REPO_RAW_PATH = "raw-repositories"
 REPO_EXTRACTED_PATH = "repositories"
 APPEND_SLASH = True
 MEDIA_ROOT = os.path.join(os.path.expanduser("~"), REPO_BASE_PATH)
+API_URL = "http://127.0.0.1:8000/api/"
 
 #redis
 REDIS_HOST = '192.168.8.105'
 REDIS_PORT = 6379
 import redis
 REDIS_INSTANCE = redis.Redis(host=REDIS_HOST,port=REDIS_PORT, db=0)
+
+#Cache
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(MEDIA_ROOT,"cache"),
+        'TIMEOUT': 900,
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000
+        }
+    }
+}

@@ -5,6 +5,8 @@ var RESPONSE_ERROR = "9";
 var NO_REPOSITORY_FOUND = "5";
 
 $( document ).ready(function() {
+    var repository = JSON.parse(document.getElementById('repository').textContent);
+    var x = "";
     $('#btn-search').click(function(){
         var searchQuery = $('#search').val();
         var repoSelect = $('repo-select').val();
@@ -39,5 +41,6 @@ $( document ).ready(function() {
             $('#tab-browse').removeClass("active");
         }
     });
+
 });
 

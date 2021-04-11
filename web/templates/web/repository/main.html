@@ -4,29 +4,33 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>repopy-welcome</title>
+    <title>RepoPy - {{repository.RepositoryName}}</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
-    {%load static%}
-    <link rel="stylesheet" href="{% static 'web/css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
     {%load static%}
     <link rel="stylesheet" href="{% static 'web/css/prism.css' %}">
     {%load static%}
-    <script src="{% static 'web/js/main.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'web/css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.11/themes/default/style.min.css" integrity="sha512-P8BwDSUInKMA7I116Z1RFg/Dfk85uFdliEUYO7vQlwtxLVMNvZimfMAQsaf++9EhlAGOVX6yhDQAIY3/70jDUg==" crossorigin="anonymous" />
     {%load static%}
     <script src="{% static 'web/js/prism.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.11/jstree.min.js" integrity="sha512-bU6dl4fd2XN3Do3aWypPP2DcKywDyR3YlyszV+rOw9OpglrGyBs6TyTsbglf9umgE+sy+dKm1UHhi07Lv+Vtfg==" crossorigin="anonymous"></script>
+    {%load static%}
+    <script src="{% static 'web/js/main.js' %}"></script>
 </head>
 
 <body>
-    <div class="row" style="height: 10vh;margin: 0;width: 100%;box-shadow: 0px 3px 6px rgba(33,37,41,0.13);z-index: 9999;">
+    <div class="row" style="height: 7vh;margin: 0;width: 100%;box-shadow: 0px 3px 6px rgba(33,37,41,0.13);z-index: 9999;">
         <div class="col d-xl-flex align-self-center align-items-xl-center" style="width: 100%;height: 100%;padding-top: 0;padding-bottom: 0;padding-right: 30px;padding-left: 30px;">
             {%load static%}
             <img src="{% static 'web/images/repopy-logo.svg' %}" style="width: auto;height: 60%;">
+            <h4 class="repository-name ml-4 text-uppercase font-weight-normal">{{repository.RepositoryName}}</h4>
         </div>
     </div>
-    <div class="row" style="height: 90vh;width: 100%;margin: 0;">
+    <div class="row" style="height: 93vh;width: 100%;margin: 0;">
         <div class="col" style="width: 20%;height: 100%;max-width: 25%;min-width: 20%;padding: 0;">
             <div class="row row-cols-1 text-center d-flex d-xl-flex justify-content-center align-items-center align-self-center flex-wrap justify-content-xl-center align-items-xl-center" style="height: 10%;width: 100%;margin: 0px;">
                 <div class="col-auto text-left align-self-center" style="font-size: 20px;padding: 0;width: 100%;height: 60%;padding-left: 20px;padding-right: 20px;"><input class="border rounded-pill shadow-sm form-control-lg" type="search" name="search" placeholder="search" style="padding: 0;width: 100%;height: 100%;padding-left: 20px;padding-right: 20px;"></div>
@@ -40,7 +44,7 @@
                         </ul>
                         <div class="tab-content tabs" style="padding-top: 10px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px;height: 100%;width: 100%;">
                             <div class="tab-pane active" role="tabpanel" id="tab-browse-content" style="height: 100%;">
-                                <p>Content for tab 1.</p>
+                                <div id="folder-tree"></div>
                             </div>
                             <div class="tab-pane fade" role="tabpanel" id="tab-search-content">
                                 <p>Content for tab 3.</p>
@@ -55,6 +59,18 @@
             <pre class="line-numbers match-braces language-python" data-src="http://localhost:8000/api/files/Get" style="margin: 0px;padding: 0px;"></pre>
         </div>
     </div>
+    {{ repository|json_script:"repository" }}
+    <script>
+        $( document ).ready(function() {
+            $('#folder-tree').jstree({
+                'core':{
+                    'data':{
+                        'url' : API_URL + 'files/GetFilesInRepository/?RepositoryID=' + '{{repository.RepositoryID}}'
+                    },
+                }
+            });
+        });
+    </script>
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script> -->
 </body>

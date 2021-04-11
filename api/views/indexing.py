@@ -1,4 +1,5 @@
-from datetime import datetime
+from api.models.models import FileModel
+from datetime import date, datetime
 from os import path
 from repopy.settings import REPO_BASE_PATH, REPO_EXTRACTED_PATH, REPO_RAW_PATH, RESPONSE_ERROR, RESPONSE_SUCCESS
 from django import conf
@@ -21,6 +22,7 @@ import uuid
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 import os
+import pathlib
 
 redis = settings.REDIS_INSTANCE
 def indexRepoDirectory(request):
@@ -37,7 +39,7 @@ def indexRepoDirectory(request):
                 tb = traceback.format_tb(e.__traceback__)
                 err = ErrorModel(msg=errmsg, trace=tb,module="Indexer")
                 retrmodelerr = jsons.dump(err)
-                print(retrmodelerr)
+                print(err.ErrMsg)
                 return HttpResponseServerError()
                 # return JsonResponse(retrmodelerr,safe=False)
 
@@ -103,6 +105,17 @@ def repoUpload(request):
                     repository.ImportedDate = datetime.now()
                     repository.RepositoryID = uuid.UUID(generatedName)
                     repository.save()
+
+                    #insert file to database
+                    for pfile in pathlib.Path(repository.RepositoryBaseDir).glob('**/*'):
+                        file = FileModel()
+                        file.FileID = uuid.uuid4()
+                        file.Filename = pfile.name
+                        file.FilePath = pfile
+                        file.IsDirectory = pfile.is_dir()
+                        file.RepositoryID = repository.RepositoryID
+                        file.DateAdded = datetime.now()
+                        file.save()
 
                     response = ResponseModel()
                     response.ResponseCode = RESPONSE_SUCCESS

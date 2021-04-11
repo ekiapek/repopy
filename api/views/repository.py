@@ -1,3 +1,4 @@
+import re
 from api.models import Repositories, ApiModel
 from django.http import HttpResponse,JsonResponse, response
 import jsons
@@ -34,3 +35,23 @@ def getLatestIndexedRepository(request):
         responseModel.ResponseMessage = "Error getting repository"
         retrmodel = jsons.dump(responseModel)
         return JsonResponse(retrmodel,safe=False)
+
+def getRepository(request,repositoryID):
+    try:
+        repository = Repositories.objects.get(RepositoryID = repositoryID)
+        if(repository != None):
+            repoModel = ApiModel.Repositories()
+
+            repoModel.RepositoryID = repository.RepositoryID
+            repoModel.RepositoryName = repository.RepositoryName
+            repoModel.RepositoryBaseDir = repository.RepositoryBaseDir
+            repoModel.ImportedDate = repository.ImportedDate
+            repoModel.LastIndexed = repository.LastIndexed
+            retrmodel = jsons.dump(repoModel)
+            return JsonResponse(retrmodel,safe=False)
+    except Exception as e:
+        responseModel = ApiModel.ResponseModel()
+        responseModel.ResponseCode = RESPONSE_ERROR
+        responseModel.ResponseMessage = "Error getting repository"
+        retrmodel = jsons.dump(responseModel)
+        return response.HttpResponseServerError()
