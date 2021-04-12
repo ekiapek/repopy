@@ -10,8 +10,10 @@ from django.views.decorators.cache import cache_page
 
 @cache_page(60*15)
 def getFile(request):
-    file = open("C:\\Users\\ASUS\\Documents\\repopy\\logic\\Burger.py","rb")
-    return FileResponse(file)
+    if(request.GET['FileID'])!=None:
+        file = FileModel.objects.get(FileID = request.GET['FileID'])
+        fileResponse = open(file.FilePath,"rb")
+        return FileResponse(fileResponse)
 
 # @cache_page(60*15)
 def getFilesInRepo(request):

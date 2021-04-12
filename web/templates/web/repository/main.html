@@ -56,21 +56,12 @@
         </div>
         <div class="col code-container" style="height: 100%;width: 80%;max-width: 80%;padding:0px;overflow-y: scroll;">
             <p class="code-title">Burger.py</p>
-            <pre class="line-numbers match-braces language-python" data-src="http://localhost:8000/api/files/Get" style="margin: 0px;padding: 0px;"></pre>
+            <div id="prism-container">
+                <pre class="line-numbers"><code id="code" class="language-python"></code></pre>
+            </div>
         </div>
     </div>
     {{ repository|json_script:"repository" }}
-    <script>
-        $( document ).ready(function() {
-            $('#folder-tree').jstree({
-                'core':{
-                    'data':{
-                        'url' : API_URL + 'files/GetFilesInRepository/?RepositoryID=' + '{{repository.RepositoryID}}'
-                    },
-                }
-            });
-        });
-    </script>
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script> -->
 </body>

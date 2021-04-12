@@ -42,5 +42,32 @@ $( document ).ready(function() {
         }
     });
 
+    $('#folder-tree').jstree({
+        'core':{
+            'data':{
+                'url' : API_URL + 'files/GetFilesInRepository/?RepositoryID=' + repository.RepositoryID
+            },
+        }
+    });
+
+    $('#folder-tree').on(
+        "select_node.jstree", function(event, data){
+            $.ajax({
+                url : API_URL + "files/Get?FileID=" + data.node.id,
+                method: 'GET',
+                success: function(data){
+                    if($('#code').children().length > 0){
+                        $('#code').empty();
+                        $('#code').append(data);
+                        Prism.highlightAll();
+                    }
+                    else{
+                        $('#code').append(data);
+                        Prism.highlightAll();
+                    }
+                }
+            });
+        }
+    );
 });
 
