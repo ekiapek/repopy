@@ -1,5 +1,5 @@
-var API_URL = "http://localhost:8000/api/";
-var BASE_URL = "http://localhost:8000/";
+var API_URL = "http://127.0.0.1:8000/api/";
+var BASE_URL = "http://127.0.0.1:8000/";
 var RESPONSE_SUCCESS = "0";
 var RESPONSE_ERROR = "9";
 
@@ -76,18 +76,51 @@ function uploadRepo(event){
             if(response.ResponseCode == RESPONSE_SUCCESS){
                 $('#upload-loader').hide();
                 $('#upload-check').show();
-                repoID = response.ResponseMessage;
+                repoID = response.ResponseObject;
                 indexRepo(repoID);
             }
             else{
                 $('#upload-loader').hide();
+                $('#errormsg-upload').text('There was a problem uploading file. <a href="'+BASE_URL+'welcome/create-repo/'+'">Retry</a>');
             }
-            console.log(data);
+            // console.log(data);
         },
-        
+        error: function(){
+            $('#upload-loader').hide();
+            $('#errormsg-upload').text('There was a problem uploading file. <a href="'+BASE_URL+'welcome/create-repo/'+'">Retry</a>');
+        }
     });
 }
 
 function indexRepo(repoID){
     $('#indexing-loader').show();
+    $.ajax({
+        url: API_URL + "indexing/IndexRepoDirectory/",
+        type: "POST",
+        data: JSON.stringify({"RepositoryID":repoID}),
+        cache: false,
+        processData: false,
+        contentType: false,
+        enctype: 'application/json',
+        success: function(response) {
+            // response = JSON.parse(data);
+            if(response.ResponseCode == RESPONSE_SUCCESS){
+                $('#indexing-loader').hide();
+                $('#indexing-check').show();
+                repo = response.ResponseObject;
+                window.location.replace(BASE_URL)
+                // indexRepo(repoID);
+            }
+            else{
+                $('#indexing-loader').hide();
+                $('#errormsg-indexing').text('There was a problem indexing file. <a href="'+BASE_URL+'welcome/create-repo/'+'">Retry</a>');
+            }
+            console.log(data);
+        },
+        error: function(){
+            $('#indexing-loader').hide();
+            $('#errormsg-indexing').text('There was a problem indexing file. <a href="'+BASE_URL+'welcome/create-repo/'+'">Retry</a>');
+        }
+        
+    });
 }

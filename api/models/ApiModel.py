@@ -15,8 +15,7 @@ class SearchModel():
 
 class RepositoryIndexRequestModel(object):
     def __init__(self):
-        self.RepositoryName = None
-        self.RepositoryPath = None
+        self.RepositoryID = None
 
 class ErrorModel:
     def __init__(self,msg = None, trace = None, module = None):

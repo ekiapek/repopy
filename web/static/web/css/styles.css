@@ -92,6 +92,19 @@ code{
     color:rgb(204, 35, 35)!important;
 }
 
+#overlay {
+  position: fixed;
+  display: none;
+  width: 75%;
+  height: 93%;
+
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 2;
+  cursor: pointer;
+}
+
 .loader { 
     width:500px; 
     margin:0 auto;

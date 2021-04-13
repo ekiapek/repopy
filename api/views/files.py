@@ -1,4 +1,4 @@
-from django.http.response import JsonResponse
+from django.http.response import HttpResponse, JsonResponse
 import jsons
 from repopy.settings import NO_REPOSITORY_FOUND, RESPONSE_ERROR, RESPONSE_SUCCESS
 from api.models import ApiModel
@@ -7,15 +7,22 @@ import uuid
 from django.http import FileResponse
 import pathlib
 from django.views.decorators.cache import cache_page
+from django.utils.html import escape
 
 @cache_page(60*15)
 def getFile(request):
     if(request.GET['FileID'])!=None:
         file = FileModel.objects.get(FileID = request.GET['FileID'])
-        fileResponse = open(file.FilePath,"rb")
-        return FileResponse(fileResponse)
+        f = pathlib.Path(file.FilePath)
+        if(f.is_dir()):
+            return HttpResponse()
+        if(f.suffix == ".pyc" or f.suffix == ".exe"):
+            return HttpResponse("binary file")
+        fileResponse = open(file.FilePath,"r")
+        a = escape(fileResponse.read())
+        return FileResponse(a)
 
-# @cache_page(60*15)
+@cache_page(60*15)
 def getFilesInRepo(request):
     try:
         repoID = uuid.UUID(request.GET['RepositoryID'])

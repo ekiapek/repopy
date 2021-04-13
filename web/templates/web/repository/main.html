@@ -36,17 +36,17 @@
                 <div class="col-auto text-left align-self-center" style="font-size: 20px;padding: 0;width: 100%;height: 60%;padding-left: 20px;padding-right: 20px;"><input class="border rounded-pill shadow-sm form-control-lg" type="search" name="search" placeholder="search" style="padding: 0;width: 100%;height: 100%;padding-left: 20px;padding-right: 20px;"></div>
             </div>
             <div class="row" style="height: 90%;width: 100%;margin: 0;">
-                <div class="col" style="padding-left: 0;padding-right: 0;">
-                    <div class="tab" role="tabpanel">
+                <div class="col" style="padding-left: 0;padding-right: 0;height: 93%;">
+                    <div class="tab" role="tabpanel" style="height: 100%;">
                         <ul class="nav nav-tabs nav-fill" role="tablist">
                             <li id="tab-browse" class="nav-item active" role="presentation"><a class="nav-link" role="tab" data-toggle="tab" href="#tab-browse-content" style="font-weight: 600;">BROWSE</a></li>
                             <li id="tab-search" class="nav-item" role="presentation"><a class="nav-link" role="tab" data-toggle="tab" href="#tab-search-content" style="font-weight: 600;">SEARCH</a></li>
                         </ul>
-                        <div class="tab-content tabs" style="padding-top: 10px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px;height: 100%;width: 100%;">
+                        <div class="tab-content tabs" style="padding-top: 10px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px;height: 100%;width: 100%;overflow-y: scroll;">
                             <div class="tab-pane active" role="tabpanel" id="tab-browse-content" style="height: 100%;">
                                 <div id="folder-tree"></div>
                             </div>
-                            <div class="tab-pane fade" role="tabpanel" id="tab-search-content">
+                            <div class="tab-pane fade" role="tabpanel" id="tab-search-content" style="height: 100%;">
                                 <p>Content for tab 3.</p>
                             </div>
                         </div>
@@ -55,9 +55,11 @@
             </div>
         </div>
         <div class="col code-container" style="height: 100%;width: 80%;max-width: 80%;padding:0px;overflow-y: scroll;">
-            <p class="code-title">Burger.py</p>
+            <div id="overlay"></div>
+            <p class="code-title" id="code-title"></p>
             <div id="prism-container">
-                <pre class="line-numbers"><code id="code" class="language-python"></code></pre>
+                <pre id="code-pre" class="line-numbers"><code id="code"></code></pre>
+                <div id="code-markup" ></div>
             </div>
         </div>
     </div>

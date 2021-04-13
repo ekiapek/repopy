@@ -1,3 +1,4 @@
+from api.models import ApiModel
 from api.models.models import FileModel
 from datetime import date, datetime
 from os import path
@@ -28,20 +29,42 @@ redis = settings.REDIS_INSTANCE
 def indexRepoDirectory(request):
     if (request.method == "POST"):
         if(request.POST != None):
-            repoModel = jsons.loads(request.body,RepositoryIndexRequestModel)
-            try:
-                parsedRepo = parser.parseCode(repoModel.RepositoryPath,repoModel.RepositoryName)
-                # indexedRepo = idx.indexRepo(parsedRepo,redis)
-                retrmodel = jsons.dump(parsedRepo)
-                return JsonResponse(retrmodel,safe=False)
-            except Exception as e:
-                errmsg = traceback.format_exc(limit=1)
-                tb = traceback.format_tb(e.__traceback__)
-                err = ErrorModel(msg=errmsg, trace=tb,module="Indexer")
-                retrmodelerr = jsons.dump(err)
-                print(err.ErrMsg)
-                return HttpResponseServerError()
-                # return JsonResponse(retrmodelerr,safe=False)
+            req = jsons.loads(request.body,RepositoryIndexRequestModel)
+            repoID = uuid.UUID(req.RepositoryID)
+            repoModel = Repositories.objects.get(RepositoryID=repoID)
+            if(repoModel != None):
+                try:
+                    parsedRepo = parser.parseCode(repoModel.RepositoryBaseDir,str(repoModel.RepositoryID))
+                    indexedRepo = idx.indexRepo(parsedRepo,redis)
+                    repoModel.LastIndexed = datetime.now()
+                    repoModel.save()
+
+                    reposModel = ApiModel.Repositories()
+
+                    reposModel.RepositoryID = repoModel.RepositoryID
+                    reposModel.RepositoryName = repoModel.RepositoryName
+                    reposModel.RepositoryBaseDir = repoModel.RepositoryBaseDir
+                    reposModel.ImportedDate = repoModel.ImportedDate
+                    reposModel.LastIndexed = repoModel.LastIndexed
+
+                    resp = ResponseModel()
+                    resp.ResponseCode = RESPONSE_SUCCESS
+                    resp.ResponseMessage = "success"
+                    resp.ResponseObject = jsons.dump(reposModel)
+                    retrmodel = jsons.dump(resp)
+                    return JsonResponse(retrmodel,safe=False)
+                except Exception as e:
+                    errmsg = traceback.format_exc(limit=1)
+                    tb = traceback.format_tb(e.__traceback__)
+                    err = ErrorModel(msg=errmsg, trace=tb,module="Indexer")
+                    retrmodelerr = jsons.dump(err)
+                    print(err.ErrMsg)
+                    resp = ResponseModel()
+                    resp.ResponseCode = RESPONSE_ERROR
+                    resp.ResponseMessage = "error"
+                    retrmodel = jsons.dump(resp)
+                    return JsonResponse(retrmodel,safe=False)
+                    # return JsonResponse(retrmodelerr,safe=False)
 
     else:
         return HttpResponseNotAllowed("Not Allowed!")
@@ -63,7 +86,11 @@ def indexRepo(request):
                     err = ErrorModel(msg=errmsg, trace=tb,module="Indexer")
                     retrmodelerr = jsons.dump(err)
                     print(retrmodelerr)
-                    return HttpResponseServerError()
+                    resp = ResponseModel()
+                    resp.ResponseCode = RESPONSE_ERROR
+                    resp.ResponseMessage = "error"
+                    retrmodel = jsons.dump(resp)
+                    return JsonResponse(retrmodel,safe=False)
                     # return JsonResponse(retrmodelerr,safe=False)
 
     else:

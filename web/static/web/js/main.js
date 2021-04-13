@@ -5,6 +5,7 @@ var RESPONSE_ERROR = "9";
 var NO_REPOSITORY_FOUND = "5";
 
 $( document ).ready(function() {
+    $('#code-markup').hide();
     var repository = JSON.parse(document.getElementById('repository').textContent);
     var x = "";
     $('#btn-search').click(function(){
@@ -52,12 +53,43 @@ $( document ).ready(function() {
 
     $('#folder-tree').on(
         "select_node.jstree", function(event, data){
+            if(!data.node.children.length>0){
+                $('#code-title').show();
+                document.getElementById("overlay").style.display = "block";
+            }
+            else{
+                $('#code-title').hide();
+            }
+            
+            var codeTitle = data.node.text;
+            var codeTitles = codeTitle.split(".");
+            var fileFormat = codeTitles[codeTitles.length-1];
+            var filetype = generateFileType(fileFormat);
+            var generatedClass = "language"+filetype;
             $.ajax({
                 url : API_URL + "files/Get?FileID=" + data.node.id,
                 method: 'GET',
                 success: function(data){
+                    document.getElementById("overlay").style.display = "none";
+                    $('#code').removeClass();
+                    $('#code').addClass(generatedClass);
+                    $('#code-title').text(codeTitle);
                     if($('#code').children().length > 0){
-                        $('#code').empty();
+                        if(generatedClass.indexOf("html")>0){                            
+                            $('#code-pre').hide();
+                            $('#code').hide();
+                            $('#code-markup').append('<script type="text/plain" class="language-markup">'+data+'</script>');
+                            $('#code-markup').show();                            
+                        }
+                        else{
+                            if($('#code-pre').is(":hidden") || $('#code').is(":hidden")){
+                                $('#code-pre').show();
+                                $('#code').show();
+                                $('#code-markup').hide();
+                                $('#code-markup').empty();
+                            }
+                        } 
+                        $('#code').empty();                       
                         $('#code').append(data);
                         Prism.highlightAll();
                     }
@@ -71,3 +103,13 @@ $( document ).ready(function() {
     );
 });
 
+function generateFileType(format){
+    switch (format){
+        case "py": return "-python";
+        case "html": return "-markup";
+        case "css": return "-css";
+        case "xml": return "-markup";
+        case "js": return "-javascript";
+        default: return "-vim";
+    }
+}
