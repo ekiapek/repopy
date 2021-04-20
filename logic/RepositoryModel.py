@@ -1,6 +1,6 @@
 class RepositoryModel:
     def __init__(self):
-        self.RepositoryName = None
+        self.RepositoryID = None
         self.BasePath = None
         self.Documents = []
 
@@ -18,6 +18,13 @@ class ClassModel:
         self.LineNo = None
         self.ColOffset = None
         self.Parents = []
+        self.Functions = []
+
+class FunctionModel:
+    def __init__(self):
+        self.Name = None
+        self.LineNo = None
+        self.ColOffset = None
 
 class ParentClassModel:
     def __init__(self):

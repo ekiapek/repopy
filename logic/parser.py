@@ -3,17 +3,17 @@ import astroid
 import glob
 
 import jsons
-from logic.RepositoryModel import ClassModel,RepositoryModel,ParentClassModel,DocumentModel,ImportModuleModel
+from logic.RepositoryModel import ClassModel,RepositoryModel,ParentClassModel,DocumentModel,ImportModuleModel,FunctionModel
 import os
 import jsonpickle
 
-def parseCode(base_dir,repository_name):
+def parseCode(base_dir,repository_id):
     # root_dir needs a trailing slash (i.e. /root/dir/)
     repo = RepositoryModel()
-    repo.RepositoryName = repository_name
+    repo.RepositoryName = repository_id
     repo.BasePath = base_dir
 
-    f = open(base_dir+"demoparse.txt", "a")
+    # f = open(base_dir+"demoparse.txt", "a")
     for filename in glob.iglob(base_dir + '**/*.py', recursive=True):
         file = open(filename).read()
         code = astroid.parse(file)
@@ -92,6 +92,16 @@ def parseCode(base_dir,repository_name):
                             parentNode.Name = base.name
                             parentNode.Type = "class"
                             classNode.Parents.append(parentNode)
+
+                if(len(node.body > 0)):
+                    for clsbody in node.body:
+                        if(isinstance(clsbody,astroid.FunctionDef)):
+                            func = FunctionModel()
+                            func.Name = clsbody.name
+                            func.ColOffset = clsbody.col_offset
+                            func.LineNo = clsbody.lineno
+                            classNode.Functions.append(func)
+
                 
                 document.Classes.append(classNode)
         
