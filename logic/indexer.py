@@ -1,3 +1,4 @@
+import pathlib
 import jsons
 from redisearch import Client,IndexDefinition,TextField,TagField
 from redisgraph import Node, Edge, Graph, Path
@@ -28,43 +29,44 @@ def indexRepo(repo=None, redisConn=None):
             
             #indexing the document for Full Text Indexing
             #this section will index all files in the repository directory
-            files = FileModel.objects.get(RepositoryID = repo.RepositoryID)
+            files = FileModel.objects.filter(RepositoryID = _repo.RepositoryID)
             for file in files:
-                doc = next(filter(lambda x: x.DocumentPath == file.FilePath,_repo.Documents),None)
-                if(doc != None):
-                    #special treatment for document which has class in it
-                    classes_in_doc = []
-                    content = open(doc.DocumentPath).read()
-                    for classModel in doc.Classes:
-                        classes_in_doc.append(classModel.Name)
-                        classes.append(classModel)
-                        for parent in classModel.Parents:
-                            classes_in_doc.append(parent.Name)
-                    
-                    strClassInDoc = " ".join(classes_in_doc)
-                    client.add_document("doc:"+str(file.FileID),
-                            DocumentName = file.Filename,
-                            Content = content,
-                            Classes = strClassInDoc,
-                            replace=True
-                        # mapping={
-                        #     'DocumentName' : doc.DocumentName,
-                        #     'Content' : content,
-                        #     'Classes' : strClassInDoc
-                        # }
-                    )
-                else:
-                    content = open(file.FilePath).read()
-                    client.add_document("doc:"+str(file.FileID),
-                            DocumentName = file.Filename,
-                            Content = content,
-                            replace=True
-                        # mapping={
-                        #     'DocumentName' : doc.DocumentName,
-                        #     'Content' : content,
-                        #     'Classes' : strClassInDoc
-                        # }
-                    )
+                f = pathlib.Path(file.FilePath)
+                if(file.IsDirectory == False and (f.suffix != '.pyc' and f.suffix != ".exe")):
+                    doc = next(filter(lambda x: x.DocumentPath == file.FilePath,_repo.Documents),None)
+                    if(doc != None and len(doc.Classes)>0):
+                        #special treatment for document which has class in it
+                        classes_in_doc = []
+                        content = open(file.FilePath,"r").read()
+                        for classModel in doc.Classes:
+                            classes_in_doc.append(classModel.Name)
+                            classes.append(classModel)
+                            for parent in classModel.Parents:
+                                classes_in_doc.append(parent.Name)
+                        
+                        strClassInDoc = " ".join(classes_in_doc)
+                        client.redis.hset("doc:"+str(file.FileID),
+                                # DocumentName = file.Filename,
+                                # Content = content,
+                                # Classes = strClassInDoc,
+                                # replace=True
+                            mapping={
+                                'DocumentName' : file.Filename,
+                                'Content' : content,
+                                'Classes' : strClassInDoc
+                            }
+                        )
+                    else:
+                        content = open(file.FilePath,"r").read()
+                        client.redis.hset("doc:"+str(file.FileID),
+                                # DocumentName = file.Filename,
+                                # Content = content,
+                                # replace=True
+                            mapping={
+                                'DocumentName' : file.Filename,
+                                'Content' : content,
+                            }
+                        )
 
 
             #insert terms in redisearch

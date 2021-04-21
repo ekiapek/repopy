@@ -53,6 +53,10 @@ $(document).ready(function() {
     $('#back-btn').click(function(event){
         window.location.replace(BASE_URL + "welcome/")
     });
+
+    $('#btn-finish').click(function(event){
+        window.location.replace(BASE_URL)
+    });
 });
 
 function uploadRepo(event){
@@ -81,13 +85,17 @@ function uploadRepo(event){
             }
             else{
                 $('#upload-loader').hide();
-                $('#errormsg-upload').text('There was a problem uploading file. <a href="'+BASE_URL+'welcome/create-repo/'+'">Retry</a>');
+                $('#errormsg-upload').text('There was a problem uploading file. ');
+                $('#errormsg-upload').append('<a href="'+BASE_URL+'welcome/create-repo/'+'">Retry</a>');
+                $('#errormsg-upload').show();
             }
             // console.log(data);
         },
         error: function(){
             $('#upload-loader').hide();
-            $('#errormsg-upload').text('There was a problem uploading file. <a href="'+BASE_URL+'welcome/create-repo/'+'">Retry</a>');
+            $('#errormsg-upload').text('There was a problem uploading file. ');
+            $('#errormsg-upload').append('<a href="'+BASE_URL+'welcome/create-repo/'+'">Retry</a>');
+            $('#errormsg-upload').show();
         }
     });
 }
@@ -113,13 +121,17 @@ function indexRepo(repoID){
             }
             else{
                 $('#indexing-loader').hide();
-                $('#errormsg-indexing').text('There was a problem indexing file. <a href="'+BASE_URL+'welcome/create-repo/'+'">Retry</a>');
+                $('#errormsg-indexing').text('There was a problem indexing file. ');
+                $('#errormsg-indexing').append('<a href="'+BASE_URL+'welcome/create-repo/'+'">Retry</a>');
+                $('#errormsg-indexing').show();
             }
             console.log(data);
         },
         error: function(){
             $('#indexing-loader').hide();
-            $('#errormsg-indexing').text('There was a problem indexing file. <a href="'+BASE_URL+'welcome/create-repo/'+'">Retry</a>');
+            $('#errormsg-indexing').text('There was a problem indexing file. ');
+            $('#errormsg-indexing').append('<a href="'+BASE_URL+'welcome/create-repo/'+'">Retry</a>');
+            $('#errormsg-indexing').show();
         }
         
     });

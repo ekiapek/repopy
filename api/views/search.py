@@ -1,13 +1,15 @@
+from api.views import repository
 from django.http import HttpResponse,JsonResponse
 from django.conf import settings
 import os
+import jsons
 from redisearch import *
 import redisearch.aggregation as aggregations
 import redisearch.reducers as reducers
 from api.models.ApiModel import ResponseModel
 
 redis_instance = settings.REDIS_INSTANCE
-client = None
+# client = None
 
 def searchSuggest(request):
     words = []
@@ -87,3 +89,12 @@ def selectRepo(request):
             response = ResponseModel(code=00,message="Success")
             return JsonResponse(response)
 
+def search(request):
+    if 'q' in request.GET and 'Repository' in request.GET:
+        searchQ = request.GET['q']
+        repository = request.GET['Repository']
+        client = Client(repository,conn=redis_instance)
+        q = Query(searchQ).paging(0,100).with_scores().highlight()
+        res = client.search(q)
+        retr = jsons.dump(res)
+        return JsonResponse(retr)

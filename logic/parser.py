@@ -10,7 +10,7 @@ import jsonpickle
 def parseCode(base_dir,repository_id):
     # root_dir needs a trailing slash (i.e. /root/dir/)
     repo = RepositoryModel()
-    repo.RepositoryName = repository_id
+    repo.RepositoryID = repository_id
     repo.BasePath = base_dir
 
     # f = open(base_dir+"demoparse.txt", "a")
@@ -93,7 +93,7 @@ def parseCode(base_dir,repository_id):
                             parentNode.Type = "class"
                             classNode.Parents.append(parentNode)
 
-                if(len(node.body > 0)):
+                if(len(node.body) > 0):
                     for clsbody in node.body:
                         if(isinstance(clsbody,astroid.FunctionDef)):
                             func = FunctionModel()
