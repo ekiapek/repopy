@@ -17,11 +17,16 @@ def indexRepo(repo=None, redisConn=None):
             graphName = repo.RepositoryID + "-Relations"
             client = Client(repo.RepositoryID,conn=redisConn)
             graph = Graph(graphName,redisConn)
+            
+            try:
+                client.drop_index()
+                graph.delete()
+            except:
+                pass
 
             client.create_index((
                 TextField("DocumentName",no_stem=True),
-                TextField("Content",weight=1),
-                TextField("Classes",weight=2)), 
+                TextField("Content",weight=1)),
                 definition=IndexDefinition(prefix=['doc:'])
             )
 
@@ -33,40 +38,17 @@ def indexRepo(repo=None, redisConn=None):
             for file in files:
                 f = pathlib.Path(file.FilePath)
                 if(file.IsDirectory == False and (f.suffix != '.pyc' and f.suffix != ".exe")):
-                    doc = next(filter(lambda x: x.DocumentPath == file.FilePath,_repo.Documents),None)
-                    if(doc != None and len(doc.Classes)>0):
-                        #special treatment for document which has class in it
-                        classes_in_doc = []
-                        content = open(file.FilePath,"r").read()
-                        for classModel in doc.Classes:
-                            classes_in_doc.append(classModel.Name)
-                            classes.append(classModel)
-                            for parent in classModel.Parents:
-                                classes_in_doc.append(parent.Name)
-                        
-                        strClassInDoc = " ".join(classes_in_doc)
-                        client.redis.hset("doc:"+str(file.FileID),
-                                # DocumentName = file.Filename,
-                                # Content = content,
-                                # Classes = strClassInDoc,
-                                # replace=True
-                            mapping={
-                                'DocumentName' : file.Filename,
-                                'Content' : content,
-                                'Classes' : strClassInDoc
-                            }
-                        )
-                    else:
-                        content = open(file.FilePath,"r").read()
-                        client.redis.hset("doc:"+str(file.FileID),
-                                # DocumentName = file.Filename,
-                                # Content = content,
-                                # replace=True
-                            mapping={
-                                'DocumentName' : file.Filename,
-                                'Content' : content,
-                            }
-                        )
+                    print("read: {0}".format(file.FilePath))
+                    content = open(file.FilePath,"r",errors='ignore').read()
+                    client.redis.hset("doc:"+str(file.FileID),
+                            # DocumentName = file.Filename,
+                            # Content = content,
+                            # replace=True
+                        mapping={
+                            'DocumentName' : file.Filename,
+                            'Content' : content,
+                        }
+                    )
 
 
             #insert terms in redisearch
@@ -93,49 +75,99 @@ def indexRepo(repo=None, redisConn=None):
             #         #     'Classes' : strClassInDoc
             #         # }
             #     )
+
+            #identifying classes in the whole repository
+            for doc in _repo.Documents:
+                for classModel in doc.Classes:
+                    classes.append(classModel)
             
             #creating class relations
+            #indexing meaningful terms in documents (class and functions)
             for doc in _repo.Documents:
+                f = files.filter(FilePath = doc.DocumentPath).first()
                 for classModel in doc.Classes:
                     baseClass = Node(label = "Class", properties = {
                         'ClassName': classModel.Name,
                         'Type' : classModel.Type,
                         'LineNo' : classModel.LineNo,
-                        'ColOffset' : classModel.ColOffset
+                        'ColOffset' : classModel.ColOffset,
+                        'FileID':str(f.FileID)
                     })
                     graph.add_node(baseClass)
 
                     for parent in classModel.Parents:
-                        x = list(filter(lambda y: y.Name == parent.Name and parent.type != "attribute", classes))
+                        #check if parent is from this repository
+                        x = list(filter(lambda y: y.Name == parent.Name and parent.Type != "attribute", classes))
                         if(len(x)>0):
-                            for i in x:
-                                print(i.Name+" "+i.Type+" "+str(i.LineNo)+" "+str(i.ColOffset))
-                                parentClass = Node(label = "Class", properties = {
-                                    'ClassName': i.Name,
-                                    'Type' : i.Type,
-                                    'LineNo' : i.LineNo,
-                                    'ColOffset' : i.ColOffset
-                                })
-                                graph.add_node(parentClass)
-                                relation = Edge(parentClass,'parentOf',baseClass)
-                                graph.add_edge(relation)
+                            pass
+                            #using graph MERGE command to ensure that the node only exist once
+                            #implemented later after all classes in this repository has been indexed as a node
+                            # for parentCls in x:
+                            #     queries = []
+                            #     queries.append("""MERGE (parent:Class{{ClassName:"{0}",Type:"{1}",LineNo:{2},ColOffset:{3}}})""".format(parentCls.Name, parentCls.Type, parentCls.LineNo, parentCls.ColOffset))
+                            #     queries.append("""MERGE (base:Class{{ClassName:"{0}",Type:"{1}",LineNo:{2},ColOffset:{3},FileID:"{4}"}})""".format(classModel.Name, classModel.Type, classModel.LineNo, classModel.ColOffset,str(f.FileID)))
+                            #     queries.append("""MERGE (parent)-[r:parentOf]->(base)""")
+
+                            #     graph.query(" ".join(queries))
+                        
+                            # for i in x:
+                                # print(i.Name+" "+i.Type+" "+str(i.LineNo)+" "+str(i.ColOffset))
+                                # parentClass = Node(label = "Class", properties = {
+                                #     'ClassName': i.Name,
+                                #     'Type' : i.Type,
+                                #     'LineNo' : i.LineNo,
+                                #     'ColOffset' : i.ColOffset
+                                # })
+                                # graph.merge()
+                                # graph.add_node(parentClass)
+                                # relation = Edge(parentClass,'parentOf',baseClass)
+                                # graph.add_edge(relation)
                         else:
-                            print(parent.Name+" "+parent.Type)
-                            parentClass = Node(label = "Class", properties = {
-                                'ClassName': parent.Name,
-                                'Type' : parent.Type,
-                                'LineNo' : '',
-                                'ColOffset' : ''
-                            })
-                            graph.add_node(parentClass)
-                            relation = Edge(parentClass,'parentOf',baseClass)
-                            graph.add_edge(relation)
+                            # print(parent.Name+" "+parent.Type)
+                            # parentClass = Node(label = "Class", properties = {
+                            #     'ClassName': parent.Name,
+                            #     'Type' : parent.Type,
+                            #     'LineNo' : '',
+                            #     'ColOffset' : ''
+                            # })
+                            # graph.add_node(parentClass)
+                            # relation = Edge(parentClass,'parentOf',baseClass)
+                            # graph.add_edge(relation)
+                            queries = []
+                            queries.append("""MERGE (parent:Class{{ClassName:"{0}",Type:"{1}",LineNo:'',ColOffset:''}})""".format(parent.Name, parent.Type))
+                            queries.append("""MERGE (base:Class{{ClassName:"{0}",Type:"{1}",LineNo:{2},ColOffset:{3},FileID:"{4}"}})""".format(classModel.Name, classModel.Type, classModel.LineNo, classModel.ColOffset,str(f.FileID)))
+                            queries.append("""MERGE (parent)-[r:parentOf]->(base)""")
 
-            #creating class relation with functions
-            # for doc in _repo.Documents:
+                            graph.query(" ".join(queries))
 
-                    
+                    for funct in classModel.Functions:
+                        functionNode = Node(label="Function", properties={
+                            'Name':funct.Name,
+                            'LineNo':funct.LineNo,
+                            'ColOffset':funct.ColOffset
+                        })
+                        funcRelation = Edge(baseClass,'HasFunction',functionNode)
+                        graph.add_node(functionNode)
+                        graph.add_edge(funcRelation)
+
             graph.commit()
+
+            #begin creating relations for nodes that already exist
+            for doc in _repo.Documents:
+                f = files.filter(FilePath = doc.DocumentPath).first()
+                for classModel in doc.Classes:
+                     for parent in classModel.Parents:
+                        #check if parent is from this repository
+                        x = list(filter(lambda y: y.Name == parent.Name and parent.Type != "attribute", classes))
+                        if(len(x)>0):
+                            #merge existing related node with this node if they have parent-child relationship
+                            for parentCls in x:
+                                queries = []
+                                queries.append("""MATCH (parent:Class{{ClassName:"{0}",Type:"{1}",LineNo:{2},ColOffset:{3}}})""".format(parentCls.Name, parentCls.Type, parentCls.LineNo, parentCls.ColOffset))
+                                queries.append("""MATCH (base:Class{{ClassName:"{0}",Type:"{1}",LineNo:{2},ColOffset:{3},FileID:"{4}"}})""".format(classModel.Name, classModel.Type, classModel.LineNo, classModel.ColOffset,str(f.FileID)))
+                                queries.append("""MERGE (parent)-[r:parentOf]->(base)""")
+
+                                graph.query(" ".join(queries))
 
             indexedRepository = IndexedRepositoryModel()
             indexedRepository.RediSearchClient = client
