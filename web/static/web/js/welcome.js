@@ -2,6 +2,7 @@ var API_URL = "http://127.0.0.1:8000/api/";
 var BASE_URL = "http://127.0.0.1:8000/";
 var RESPONSE_SUCCESS = "0";
 var RESPONSE_ERROR = "9";
+var REPOSITORY_ID = "";
 
 $(document).ready(function() {
     $('#get-started').click(function() {
@@ -57,6 +58,10 @@ $(document).ready(function() {
     $('#btn-finish').click(function(event){
         window.location.replace(BASE_URL)
     });
+
+    $('#retry-indexing').click(function(event){
+        indexRepo(REPOSITORY_ID);
+    });
 });
 
 function uploadRepo(event){
@@ -81,6 +86,7 @@ function uploadRepo(event){
                 $('#upload-loader').hide();
                 $('#upload-check').show();
                 repoID = response.ResponseObject;
+                REPOSITORY_ID = repoID;
                 indexRepo(repoID);
             }
             else{
@@ -102,6 +108,7 @@ function uploadRepo(event){
 
 function indexRepo(repoID){
     $('#indexing-loader').show();
+    $('#errormsg-indexing').hide();
     $.ajax({
         url: API_URL + "indexing/IndexRepoDirectory/",
         type: "POST",
@@ -121,16 +128,12 @@ function indexRepo(repoID){
             }
             else{
                 $('#indexing-loader').hide();
-                $('#errormsg-indexing').text('There was a problem indexing file. ');
-                $('#errormsg-indexing').append('<a href="'+BASE_URL+'welcome/create-repo/'+'">Retry</a>');
                 $('#errormsg-indexing').show();
             }
-            console.log(data);
+            // console.log(data);
         },
         error: function(){
             $('#indexing-loader').hide();
-            $('#errormsg-indexing').text('There was a problem indexing file. ');
-            $('#errormsg-indexing').append('<a href="'+BASE_URL+'welcome/create-repo/'+'">Retry</a>');
             $('#errormsg-indexing').show();
         }
         
