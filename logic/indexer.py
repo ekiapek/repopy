@@ -91,6 +91,7 @@ def indexRepo(repo=None, redisConn=None):
                         'Type' : classModel.Type,
                         'LineNo' : classModel.LineNo,
                         'ColOffset' : classModel.ColOffset,
+                        'Namespace' : classModel.Namespace,
                         'FileID':str(f.FileID)
                     })
                     graph.add_node(baseClass)
@@ -135,7 +136,7 @@ def indexRepo(repo=None, redisConn=None):
                             # graph.add_edge(relation)
                             queries = []
                             queries.append("""MERGE (parent:Class{{ClassName:"{0}",Type:"{1}",LineNo:'',ColOffset:''}})""".format(parent.Name, parent.Type))
-                            queries.append("""MERGE (base:Class{{ClassName:"{0}",Type:"{1}",LineNo:{2},ColOffset:{3},FileID:"{4}"}})""".format(classModel.Name, classModel.Type, classModel.LineNo, classModel.ColOffset,str(f.FileID)))
+                            queries.append("""MERGE (base:Class{{ClassName:"{0}",Type:"{1}",LineNo:{2},ColOffset:{3},Namespace"{4}",FileID:"{5}"}})""".format(classModel.Name, classModel.Type, classModel.LineNo, classModel.ColOffset,classModel.Namespace,str(f.FileID)))
                             queries.append("""MERGE (parent)-[r:parentOf]->(base)""")
 
                             graph.query(" ".join(queries))
