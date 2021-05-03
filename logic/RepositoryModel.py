@@ -17,6 +17,7 @@ class ClassModel:
         self.Type = None
         self.LineNo = None
         self.ColOffset = None
+        self.Namespace = None
         self.Parents = []
         self.Functions = []
 
