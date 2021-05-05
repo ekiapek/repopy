@@ -1,5 +1,5 @@
 import pathlib
-from redisearch import Client,IndexDefinition,TextField,AutoCompleter
+from redisearch import Client,IndexDefinition,TextField,AutoCompleter,Suggestion
 from redisgraph import Node, Edge, Graph
 from logic.RepositoryModel import IndexedRepositoryModel
 from api.models.models import FileModel
@@ -134,7 +134,7 @@ def indexRepo(repo=None, redisConn=None):
                             # graph.add_edge(relation)
                             queries = []
                             queries.append("""MERGE (parent:Class{{ClassName:"{0}",Type:"{1}",LineNo:'',ColOffset:''}})""".format(parent.Name, parent.Type))
-                            queries.append("""MERGE (base:Class{{ClassName:"{0}",Type:"{1}",LineNo:{2},ColOffset:{3},Namespace"{4}",FileID:"{5}"}})""".format(classModel.Name, classModel.Type, classModel.LineNo, classModel.ColOffset,classModel.Namespace,str(f.FileID)))
+                            queries.append("""MERGE (base:Class{{ClassName:"{0}",Type:"{1}",LineNo:{2},ColOffset:{3},Namespace:"{4}",FileID:"{5}"}})""".format(classModel.Name, classModel.Type, classModel.LineNo, classModel.ColOffset,classModel.Namespace,str(f.FileID)))
                             queries.append("""MERGE (parent)-[r:parentOf]->(base)""")
 
                             graph.query(" ".join(queries))
@@ -170,8 +170,8 @@ def indexRepo(repo=None, redisConn=None):
 
             #creating autocompleter
             ac = AutoCompleter(repo.RepositoryID,conn=redisConn)
-            for class in classes:
-                ac.add_suggestions(class.Name)
+            for cls in classes:
+                ac.add_suggestions(Suggestion(cls.Name),increment=True)
 
             indexedRepository = IndexedRepositoryModel()
             indexedRepository.RediSearchClient = client
