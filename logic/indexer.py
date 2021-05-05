@@ -1,9 +1,7 @@
 import pathlib
-import jsons
-from redisearch import Client,IndexDefinition,TextField,TagField
-from redisgraph import Node, Edge, Graph, Path
-from logic.RepositoryModel import ClassModel, IndexedRepositoryModel,RepositoryModel,ParentClassModel,DocumentModel
-import uuid
+from redisearch import Client,IndexDefinition,TextField,AutoCompleter
+from redisgraph import Node, Edge, Graph
+from logic.RepositoryModel import IndexedRepositoryModel
 from api.models.models import FileModel
 
 def indexRepo(repo=None, redisConn=None):
@@ -169,6 +167,11 @@ def indexRepo(repo=None, redisConn=None):
                                 queries.append("""MERGE (parent)-[r:parentOf]->(base)""")
 
                                 graph.query(" ".join(queries))
+
+            #creating autocompleter
+            ac = AutoCompleter(repo.RepositoryID,conn=redisConn)
+            for class in classes:
+                ac.add_suggestions(class.Name)
 
             indexedRepository = IndexedRepositoryModel()
             indexedRepository.RediSearchClient = client
