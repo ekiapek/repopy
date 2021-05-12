@@ -13,7 +13,6 @@ def getLatestIndexedRepository(request):
 
             repoModel.RepositoryID = repository.RepositoryID
             repoModel.RepositoryName = repository.RepositoryName
-            repoModel.RepositoryBaseDir = repository.RepositoryBaseDir
             repoModel.ImportedDate = repository.ImportedDate
             repoModel.LastIndexed = repository.LastIndexed
 
@@ -44,7 +43,6 @@ def getRepository(request,repositoryID):
 
             repoModel.RepositoryID = repository.RepositoryID
             repoModel.RepositoryName = repository.RepositoryName
-            repoModel.RepositoryBaseDir = repository.RepositoryBaseDir
             repoModel.ImportedDate = repository.ImportedDate
             repoModel.LastIndexed = repository.LastIndexed
             retrmodel = jsons.dump(repoModel)

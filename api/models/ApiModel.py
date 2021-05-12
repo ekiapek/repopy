@@ -28,7 +28,6 @@ class Repositories():
     def __init__(self):
         self.RepositoryID = None
         self.RepositoryName = None
-        self.RepositoryBaseDir = None
         self.ImportedDate = None
         self.LastIndexed = None
 
@@ -45,3 +44,22 @@ class FileNodeModel():
         self.icon = None
         self.li_attr = []
         self.a_attr = []
+
+class SearchResultModel():
+    def __init__(self):
+        self.Result = None
+        self.LineNo = None
+        self.ColOffset = None
+        self.Filename = None
+        self.FileID = None
+        self.HasRelation = False
+        self.Relations = []
+
+class SearchResultRelationModel():
+    def __init__(self) -> None:
+        self.RelationName = None
+        self.Result = None
+        self.LineNo = None
+        self.ColOffset = None
+        self.Filename = None
+        self.FileID = None
