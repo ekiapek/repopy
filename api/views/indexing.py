@@ -43,7 +43,6 @@ def indexRepoDirectory(request):
 
                     reposModel.RepositoryID = repoModel.RepositoryID
                     reposModel.RepositoryName = repoModel.RepositoryName
-                    reposModel.RepositoryBaseDir = repoModel.RepositoryBaseDir
                     reposModel.ImportedDate = repoModel.ImportedDate
                     reposModel.LastIndexed = repoModel.LastIndexed
 
@@ -54,11 +53,12 @@ def indexRepoDirectory(request):
                     retrmodel = jsons.dump(resp)
                     return JsonResponse(retrmodel,safe=False)
                 except Exception as e:
-                    errmsg = traceback.format_exc(limit=1)
+                    errmsg = traceback.format_exc()
                     tb = traceback.format_tb(e.__traceback__)
                     err = ErrorModel(msg=errmsg, trace=tb,module="Indexer")
                     retrmodelerr = jsons.dump(err)
-                    print(err.ErrMsg)
+                    
+                    print(errmsg)
                     resp = ResponseModel()
                     resp.ResponseCode = RESPONSE_ERROR
                     resp.ResponseMessage = "error"
@@ -173,3 +173,5 @@ def repoUpload(request):
 
     else:
         return HttpResponseNotAllowed("Not Allowed!")
+
+# def parseRepo(request):
