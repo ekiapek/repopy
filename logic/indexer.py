@@ -1,4 +1,5 @@
 import pathlib
+from typing import Text
 from redisearch import Client,IndexDefinition,TextField,AutoCompleter,Suggestion
 from redisgraph import Node, Edge, Graph
 from logic.RepositoryModel import IndexedRepositoryModel
@@ -12,13 +13,17 @@ def indexRepo(repo=None, redisConn=None):
         client = None
         _repo = repo
         if(redisConn != None):
-            graphName = repo.RepositoryID + "-Relations"
+            graphName = _repo.RepositoryID + "-Relations"
+            rediSearchTermsIndex = _repo.RepositoryID + "-Terms"
             client = Client(repo.RepositoryID,conn=redisConn)
+            clientTerms = Client(rediSearchTermsIndex,conn=redisConn)
             graph = Graph(graphName,redisConn)
+            ac = AutoCompleter(_repo.RepositoryID,conn=redisConn)
             
             try:
                 client.drop_index()
                 graph.delete()
+                clientTerms.drop_index()
             except:
                 pass
 
@@ -27,6 +32,14 @@ def indexRepo(repo=None, redisConn=None):
                 TextField("Content",weight=1)),
                 definition=IndexDefinition(prefix=['doc:'])
             )
+
+            clientTerms.create_index((
+                TextField("ClassName"),
+                TextField("FunctionName"),
+                TextField("Position",no_stem=True),
+                TextField("FileID",no_stem=True)),
+                definition=IndexDefinition(prefix="term:")
+                )
 
             classes = []
             
@@ -81,6 +94,7 @@ def indexRepo(repo=None, redisConn=None):
             
             #creating class relations
             #indexing meaningful terms in documents (class and functions)
+            term = 1
             for doc in _repo.Documents:
                 f = files.filter(FilePath = doc.DocumentPath).first()
                 for classModel in doc.Classes:
@@ -90,9 +104,20 @@ def indexRepo(repo=None, redisConn=None):
                         'LineNo' : classModel.LineNo,
                         'ColOffset' : classModel.ColOffset,
                         'Namespace' : classModel.Namespace,
+                        'Filename' : f.Filename,
                         'FileID':str(f.FileID)
                     })
                     graph.add_node(baseClass)
+                    clientTerms.redis.hset(
+                        "term:"+str(term),
+                        mapping={
+                            'ClassName':classModel.Name,
+                            'FunctionName':'',
+                            'Position':"LineNo:{0}, ColOffset:{1}".format(classModel.LineNo,classModel.ColOffset),
+                            'FileID':str(f.FileID)
+                        }
+                    )
+                    term += 1
 
                     for parent in classModel.Parents:
                         #check if parent is from this repository
@@ -134,20 +159,43 @@ def indexRepo(repo=None, redisConn=None):
                             # graph.add_edge(relation)
                             queries = []
                             queries.append("""MERGE (parent:Class{{ClassName:"{0}",Type:"{1}",LineNo:'',ColOffset:''}})""".format(parent.Name, parent.Type))
-                            queries.append("""MERGE (base:Class{{ClassName:"{0}",Type:"{1}",LineNo:{2},ColOffset:{3},Namespace:"{4}",FileID:"{5}"}})""".format(classModel.Name, classModel.Type, classModel.LineNo, classModel.ColOffset,classModel.Namespace,str(f.FileID)))
+                            queries.append("""MERGE (base:Class{{ClassName:"{0}",Type:"{1}",LineNo:{2},ColOffset:{3},Namespace:"{4}",FileID:"{5}",Filename:"{6}"}})""".format(classModel.Name, classModel.Type, classModel.LineNo, classModel.ColOffset,classModel.Namespace,str(f.FileID),f.Filename))
                             queries.append("""MERGE (parent)-[r:parentOf]->(base)""")
-
                             graph.query(" ".join(queries))
+
+                            clientTerms.redis.hset(
+                                "term:"+str(term),
+                                mapping={
+                                    'ClassName':parent.Name,
+                                    'FunctionName':'',
+                                    'Position':"",
+                                    'FileID':""
+                                }
+                            )
+                            term += 1
 
                     for funct in classModel.Functions:
                         functionNode = Node(label="Function", properties={
                             'Name':funct.Name,
                             'LineNo':funct.LineNo,
-                            'ColOffset':funct.ColOffset
+                            'ColOffset':funct.ColOffset,
+                            'FileID':str(f.FileID),
+                            'Filename':f.Filename
                         })
                         funcRelation = Edge(baseClass,'HasFunction',functionNode)
                         graph.add_node(functionNode)
                         graph.add_edge(funcRelation)
+                        clientTerms.redis.hset(
+                            "term:"+str(term),
+                            mapping={
+                                'ClassName':'',
+                                'FunctionName':funct.Name,
+                                'Position':"LineNo:{0}, ColOffset:{1}".format(funct.LineNo,funct.ColOffset),
+                                'FileID':str(f.FileID)
+                            }
+                        )
+                        term += 1
+                        ac.add_suggestions(Suggestion(funct.Name),increment=True)
 
             graph.commit()
 
@@ -169,7 +217,6 @@ def indexRepo(repo=None, redisConn=None):
                                 graph.query(" ".join(queries))
 
             #creating autocompleter
-            ac = AutoCompleter(repo.RepositoryID,conn=redisConn)
             for cls in classes:
                 ac.add_suggestions(Suggestion(cls.Name),increment=True)
 
