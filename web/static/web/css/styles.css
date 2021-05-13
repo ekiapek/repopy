@@ -157,3 +157,75 @@ code{
       width:0%;
     }
   }
+
+.card-main{
+  transition: all 100ms linear;
+  box-shadow: rgba(0, 0, 0, 0.17) 0px 2px 15px 0px;
+}
+
+.card-main:hover{
+  transition: all 100ms linear;
+  box-shadow: rgba(0, 0, 0, 0.17) 0px 0px 5px 0px;
+}
+
+.autocomplete {
+  /*the container must be positioned relative:*/
+  position: relative;
+  display: inline-block;
+}
+
+.autocomplete-items {
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  border-bottom: none;
+  border-top: none;
+  z-index: 99;
+  /*position the autocomplete items to be the same width as the container:*/
+  top: 100%;
+  left: 20px;
+  right: 0;
+  /* padding-left: 20px;padding-right: 20px; */
+  width: 90%;
+  box-shadow: rgba(0, 0, 0, 0.17) 0px 0px 5px 0px;
+}
+.autocomplete-items div {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #fff;
+  border-bottom: 1px solid #d4d4d4;
+  overflow-wrap: break-word;
+}
+.autocomplete-items div:hover {
+  /*when hovering an item:*/
+  background-color: #e9e9e9;
+}
+.autocomplete-active {
+  /*when navigating through the items using the arrow keys:*/
+  background-color: DodgerBlue !important;
+  color: #ffffff;
+}
+
+.card-detail:hover{
+  transition: all 100ms linear;
+  background-color: #358ccb;
+}
+
+.card-detail:hover h6{
+  color: #fff !important;
+}
+
+.card-detail:hover p{
+  color: #fff !important;
+}
+
+.card-detail{
+  transition: all 100ms linear;
+}
+
+.line-highlight{
+  background: #ffd40063 !important;
+}
+
+.highlight {
+  background-color: #EEF43B;
+}

@@ -5,49 +5,157 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>RepoPy - {{repository.RepositoryName}}</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
     {%load static%}
     <link rel="stylesheet" href="{% static 'web/css/prism.css' %}">
     {%load static%}
     <link rel="stylesheet" href="{% static 'web/css/styles.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.11/themes/default/style.min.css" integrity="sha512-P8BwDSUInKMA7I116Z1RFg/Dfk85uFdliEUYO7vQlwtxLVMNvZimfMAQsaf++9EhlAGOVX6yhDQAIY3/70jDUg==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.11/themes/default/style.min.css"
+        integrity="sha512-P8BwDSUInKMA7I116Z1RFg/Dfk85uFdliEUYO7vQlwtxLVMNvZimfMAQsaf++9EhlAGOVX6yhDQAIY3/70jDUg=="
+        crossorigin="anonymous" />
     {%load static%}
     <script src="{% static 'web/js/prism.js' %}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.11/jstree.min.js" integrity="sha512-bU6dl4fd2XN3Do3aWypPP2DcKywDyR3YlyszV+rOw9OpglrGyBs6TyTsbglf9umgE+sy+dKm1UHhi07Lv+Vtfg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.11/jstree.min.js"
+        integrity="sha512-bU6dl4fd2XN3Do3aWypPP2DcKywDyR3YlyszV+rOw9OpglrGyBs6TyTsbglf9umgE+sy+dKm1UHhi07Lv+Vtfg=="
+        crossorigin="anonymous"></script>
     {%load static%}
     <script src="{% static 'web/js/main.js' %}"></script>
 </head>
 
 <body>
-    <div class="row" style="height: 7vh;margin: 0;width: 100%;box-shadow: 0px 3px 6px rgba(33,37,41,0.13);z-index: 9999;">
-        <div class="col d-xl-flex align-self-center align-items-xl-center" style="width: 100%;height: 100%;padding-top: 0;padding-bottom: 0;padding-right: 30px;padding-left: 30px;">
+    <!-- Modal -->
+    <div class="modal fade" id="modal-help" tabindex="-1" aria-labelledby="modal-help" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-help-title">Help</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h3>About RepoPy</h3>
+                    <p>RepoPy is a self-hosted source code repository browser. It lets you browse your source code and
+                        do searching on your files. RepoPy is aware of classes inside your repository. You can find
+                        classes that are related using the integrated search engine.</p>
+                    <h3>Navigating in RepoPy</h3>
+                    <p>Once the repository has been indexed, you can browse the contents of your repository in the
+                        <b>Browse</b> tab. Click on any item in the displayed file hierarchy and file content will be
+                        displayed in the right side of the page.</p>
+                    <p>If you want to find something inside your repository, type in your search query inside the search
+                        bar on the left side of the page. Search result will be displayed in the <b>Search</b> tab.</p>
+                    <h3>Searching in RepoPy</h3>
+                    <p>RepoPy is integrated with a search engine that is aware of class relationship inside the hosted
+                        repository. Search results in RepoPy are grouped by their relationship.</p>
+                    <p>Below is an example of returned search result for searched class. The inheritance relationship of the searched class will be displayed as Parent and Child. Click on the search result to navigate to file containing the searched term.</p>
+                    <div class="card card-main mb-3" style="border-radius: 10px;border:0px; width:40% ;">
+                        <div class="card-body">
+                            <h4 class="card-title">Search result</h4>
+                            <h6 class="text-muted card-subtitle mb-2">Filename</h6>
+                            <p class="text-muted mb-0">Parent:</p>
+                            <div class="card card-detail">
+                                <div class="card-body">
+                                    <h6 class="text-muted card-subtitle mb-2">Parent class</h6>
+                                </div>
+                            </div>
+                            <p class="text-muted mb-0">Child:</p>
+                            <div class="card card-detail">
+                                <div class="card-body">
+                                    <h6 class="text-muted card-subtitle mb-2">Child class</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p>For function definitions that are contained within a class, we will index that too. The result will be as below where the searched function definition name and the class containing the function will be displayed. Click on the search result to navigate to file containing the searched term.</p>
+                    <div class="card card-main mb-3" style="border-radius: 10px;border:0px; width:40% ;">
+                        <div class="card-body">
+                            <h4 class="card-title">Search result</h4>
+                            <h6 class="text-muted card-subtitle mb-2">Filename</h6>
+                            <p class="text-muted mb-0">In class:</p>
+                            <div class="card card-detail">
+                                <div class="card-body">
+                                    <h6 class="text-muted card-subtitle mb-2">Containing class</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p>For search results that are not indexed in RepoPy, will be displayed as below. You can still click the result to navigate to file containing the searched term.</p>
+                    <div class="card card-main mb-3" style="border-radius: 10px;border:0px; width:40% ;">
+                        <div class="card-body">
+                            <h4 class="card-title">Search result</h4>
+                            <h6 class="text-muted card-subtitle mb-2">Filename</h6>
+                        </div>
+                    </div>
+                    <h5>Query Strings</h5>
+                    <p>RepoPy's search engine has some expanded query string for searching specific terms. Use the query string below to search for terms according to your needs.</p>
+                    <ul>
+                        <li>[Class name]</li>
+                        <p>Just directly type in the name of the class you want to search. The result will display the searched class definition along with its relations. The relation is limited to level 1 inheritance only.</p>
+                        <li><b>:related-with</b> [Class name]</li>
+                        <p>This query string will return the searched class definition along with all classes related with it. The displayed relation is not limited to level 1 inheritance only. Thus it can display the grandparents or the grandchildren of the searched class.</p>
+                        <li><b>:parent-of</b> [Class name]</li>
+                        <p>This query string will display the searched class and all of its parents, until the highest inheritance level.</p>
+                        <li><b>:child-of</b> [Class name]</li>
+                        <p>This query string will display the searched class and all of its children, until the lowest inheritance level.</p>
+                        <li><b>:function</b> [Function name] <b>:in</b> [Class name]</li>
+                        <p>This query string will display the searched function definition inside the predefined class. If the function does not present in the desired class, the search engine will try to lookup into its parents.</p>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row"
+        style="height: 7vh;margin: 0;width: 100%;box-shadow: 0px 3px 6px rgba(33,37,41,0.13);z-index: 9999;">
+        <div class="col d-xl-flex align-self-center align-items-xl-center pl-4" style="width: 100%;height: 100%;">
             {%load static%}
             <img src="{% static 'web/images/repopy-logo.svg' %}" style="width: auto;height: 60%;">
             <h4 class="repository-name ml-4 text-uppercase font-weight-normal">{{repository.RepositoryName}}</h4>
         </div>
+        <div class="col d-flex align-items-center justify-content-end pr-4">
+            <a href="#" data-toggle="modal" data-target="#modal-help"><i class="bi-question-circle"
+                    style="font-size: x-large;"></i></a>
+        </div>
     </div>
     <div class="row" style="height: 93vh;width: 100%;margin: 0;">
         <div class="col" style="width: 20%;height: 100%;max-width: 25%;min-width: 20%;padding: 0;">
-            <div class="row row-cols-1 text-center d-flex d-xl-flex justify-content-center align-items-center align-self-center flex-wrap justify-content-xl-center align-items-xl-center" style="height: 10%;width: 100%;margin: 0px;">
-                <div class="col-auto text-left align-self-center" style="font-size: 20px;padding: 0;width: 100%;height: 60%;padding-left: 20px;padding-right: 20px;"><input class="border rounded-pill shadow-sm form-control-lg" type="search" name="search" placeholder="search" style="padding: 0;width: 100%;height: 100%;padding-left: 20px;padding-right: 20px;"></div>
+            <div class="row row-cols-1 text-center d-flex d-xl-flex justify-content-center align-items-center align-self-center flex-wrap justify-content-xl-center align-items-xl-center"
+                style="height: 10%;width: 100%;margin: 0px;">
+                <div class="col-auto text-left align-self-center"
+                    style="font-size: 20px;padding: 0;width: 100%;height: 60%;padding-left: 20px;padding-right: 20px;">
+                    <input autocomplete="off" id="search-bar" class="border rounded-pill shadow-sm form-control-lg"
+                        type="search" name="search" placeholder="search"
+                        style="padding: 0;width: 100%;height: 100%;padding-left: 20px;padding-right: 20px;">
+                    <div class="autocomplete"></div>
+                </div>
             </div>
             <div class="row" style="height: 90%;width: 100%;margin: 0;">
                 <div class="col" style="padding-left: 0;padding-right: 0;height: 93%;">
                     <div class="tab" role="tabpanel" style="height: 100%;">
                         <ul class="nav nav-tabs nav-fill" role="tablist">
-                            <li id="tab-browse" class="nav-item active" role="presentation"><a class="nav-link" role="tab" data-toggle="tab" href="#tab-browse-content" style="font-weight: 600;">BROWSE</a></li>
-                            <li id="tab-search" class="nav-item" role="presentation"><a class="nav-link" role="tab" data-toggle="tab" href="#tab-search-content" style="font-weight: 600;">SEARCH</a></li>
+                            <li id="tab-browse" class="nav-item active" role="presentation"><a class="nav-link"
+                                    role="tab" data-toggle="tab" href="#tab-browse-content"
+                                    style="font-weight: 600;">BROWSE</a></li>
+                            <li id="tab-search" class="nav-item" role="presentation"><a class="nav-link" role="tab"
+                                    data-toggle="tab" href="#tab-search-content" style="font-weight: 600;">SEARCH</a>
+                            </li>
                         </ul>
-                        <div class="tab-content tabs" style="padding-top: 10px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px;height: 100%;width: 100%;overflow-y: scroll;">
+                        <div class="tab-content tabs"
+                            style="padding-top: 10px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px;height: 100%;width: 100%;overflow-y: scroll;">
                             <div class="tab-pane active" role="tabpanel" id="tab-browse-content" style="height: 100%;">
                                 <div id="folder-tree"></div>
                             </div>
                             <div class="tab-pane fade" role="tabpanel" id="tab-search-content" style="height: 100%;">
-                                <p>Content for tab 3.</p>
                             </div>
                         </div>
                     </div>
@@ -59,7 +167,7 @@
             <p class="code-title" id="code-title"></p>
             <div id="prism-container">
                 <pre id="code-pre" class="line-numbers"><code id="code"></code></pre>
-                <div id="code-markup" ></div>
+                <div id="code-markup"></div>
             </div>
         </div>
     </div>
