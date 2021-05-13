@@ -53,6 +53,7 @@ class SearchResultModel():
         self.Filename = None
         self.FileID = None
         self.HasRelation = False
+        self.Query = None
         self.Relations = []
 
 class SearchResultRelationModel():
