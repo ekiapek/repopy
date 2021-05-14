@@ -5,20 +5,20 @@ from redisgraph import Node, Edge, Graph
 from logic.RepositoryModel import IndexedRepositoryModel
 from api.models.models import FileModel
 
-def indexRepo(repo=None, redisConn=None):
+def indexRepo(repo=None, redisGraphConn=None, rediSearchConn=None):
     """
     do indexing on repository object with redisConn connection
     """
     if(repo != None):
         client = None
         _repo = repo
-        if(redisConn != None):
+        if(redisGraphConn != None and rediSearchConn!=None):
             graphName = _repo.RepositoryID + "-Relations"
             rediSearchTermsIndex = _repo.RepositoryID + "-Terms"
-            client = Client(repo.RepositoryID,conn=redisConn)
-            clientTerms = Client(rediSearchTermsIndex,conn=redisConn)
-            graph = Graph(graphName,redisConn)
-            ac = AutoCompleter(_repo.RepositoryID,conn=redisConn)
+            client = Client(repo.RepositoryID,conn=rediSearchConn)
+            clientTerms = Client(rediSearchTermsIndex,conn=rediSearchConn)
+            graph = Graph(graphName,redisGraphConn)
+            ac = AutoCompleter(_repo.RepositoryID,conn=rediSearchConn)
             
             try:
                 client.drop_index()

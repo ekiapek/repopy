@@ -3,7 +3,7 @@ from api.models import ApiModel
 from api.models.models import FileModel
 from datetime import date, datetime
 from os import path
-from repopy.settings import REPO_BASE_PATH, REPO_EXTRACTED_PATH, REPO_RAW_PATH, RESPONSE_ERROR, RESPONSE_SUCCESS
+from repopy.settings import REDISEARCH_INSTANCE, REDISGRAPH_INSTANCE, REPO_BASE_PATH, REPO_EXTRACTED_PATH, REPO_RAW_PATH, RESPONSE_ERROR, RESPONSE_SUCCESS
 from django import conf
 from django.http import HttpResponse,JsonResponse
 from django.conf import settings
@@ -26,7 +26,8 @@ from django.core.files.base import ContentFile
 import os
 import pathlib
 
-redis = settings.REDIS_INSTANCE
+redisearch_instance = REDISEARCH_INSTANCE
+redisgraph_instance = REDISGRAPH_INSTANCE
 def indexRepoDirectory(request):
     if (request.method == "POST"):
         if(request.POST != None):
@@ -36,7 +37,7 @@ def indexRepoDirectory(request):
             if(repoModel != None):
                 try:
                     parsedRepo = parser.parseCode(repoModel.RepositoryBaseDir,str(repoModel.RepositoryID))
-                    indexedRepo = idx.indexRepo(parsedRepo,redis)
+                    indexedRepo = idx.indexRepo(parsedRepo,rediSearchConn=redisearch_instance,redisGraphConn=redisgraph_instance)
                     repoModel.LastIndexed = datetime.now()
                     repoModel.save()
 

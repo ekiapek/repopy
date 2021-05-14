@@ -36,7 +36,8 @@ def getLatestIndexedRepository(request):
         tb = traceback.format_tb(e.__traceback__)
         err = ApiModel.ErrorModel(msg=errmsg, trace=tb,module="Indexer")
         retrmodelerr = jsons.dumps(err)
-        django_heroku.logging.error(retrmodelerr)
+        # django_heroku.logging.error(retrmodelerr)
+        print(retrmodelerr)
         responseModel = ApiModel.ResponseModel()
         responseModel.ResponseCode = RESPONSE_ERROR
         responseModel.ResponseMessage = "Error getting repository"
@@ -60,4 +61,6 @@ def getRepository(request,repositoryID):
         responseModel.ResponseCode = RESPONSE_ERROR
         responseModel.ResponseMessage = "Error getting repository"
         retrmodel = jsons.dump(responseModel)
+        # django_heroku.logging.error(retrmodelerr)
+        print(retrmodel)
         return response.HttpResponseServerError()

@@ -2,7 +2,7 @@ import traceback
 from typing import Tuple
 import django_heroku
 from redisgraph.graph import Graph
-from repopy.settings import REDISEARCH_CLIENT, REDIS_INSTANCE, RESERVED_KEYWORDS, RESPONSE_ERROR, RESPONSE_SUCCESS
+from repopy.settings import REDISEARCH_CLIENT, REDISEARCH_INSTANCE, REDISGRAPH_INSTANCE, REDIS_INSTANCE, RESERVED_KEYWORDS, RESPONSE_ERROR, RESPONSE_SUCCESS
 from api.views import repository
 from django.http import HttpResponse,JsonResponse, response
 from django.conf import settings
@@ -15,13 +15,14 @@ from api.models.ApiModel import ErrorModel, ResponseModel,SearchResultModel,Sear
 import redis
 from django.utils.html import escape
 
-redis_instance = REDIS_INSTANCE
+redisearch_instance = REDISEARCH_INSTANCE
+redisgraph_instance = REDISGRAPH_INSTANCE
 
 def searchSuggest(request):
     if 'q' in request.GET and 'Repository' in request.GET:
         searchQ = request.GET['q']
         repository = request.GET['Repository']
-        ac = AutoCompleter(repository,conn=redis_instance)
+        ac = AutoCompleter(repository,conn=redisearch_instance)
         res = ac.get_suggestions(searchQ,fuzzy=True)
         retr = jsons.dump(res)
         return JsonResponse(retr,safe=False)
@@ -57,10 +58,10 @@ def search(request):
         repository = str(request.GET['Repository'])
 
         try:        
-            client = Client(repository,conn=redis_instance)
+            client = Client(repository,conn=redisearch_instance)
             graphName = repository + "-Relations"
-            graph = Graph(graphName,redis_instance)
-            clientTerms = Client(repository+"-Terms",conn=redis_instance)
+            graph = Graph(graphName,redisgraph_instance)
+            clientTerms = Client(repository+"-Terms",conn=redisearch_instance)
             
             splitQuery = searchQ.split()
             splitQuery2 = searchQ.split()
