@@ -29,7 +29,7 @@ SECRET_KEY = '+^chs(6v44g1qn4v!m^l)somff56xoie1ik4_$i5btbmn_ld*-'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['192.168.8.2','localhost','127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -55,6 +55,7 @@ MIDDLEWARE = [
     # 'django.contrib.auth.middleware.AuthenticationMiddleware',
     # 'django.contrib.messages.middleware.MessageMiddleware',
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'repopy.urls'
