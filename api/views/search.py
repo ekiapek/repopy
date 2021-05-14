@@ -2,7 +2,7 @@ import traceback
 from typing import Tuple
 import django_heroku
 from redisgraph.graph import Graph
-from repopy.settings import REDISEARCH_CLIENT, REDISEARCH_INSTANCE, REDISGRAPH_INSTANCE, REDIS_INSTANCE, RESERVED_KEYWORDS, RESPONSE_ERROR, RESPONSE_SUCCESS
+from repopy.settings import REDISEARCH_CLIENT, REDISEARCH_INSTANCE, REDISGRAPH_INSTANCE, RESERVED_KEYWORDS, RESPONSE_ERROR, RESPONSE_SUCCESS
 from api.views import repository
 from django.http import HttpResponse,JsonResponse, response
 from django.conf import settings
