@@ -24,7 +24,7 @@ def getFile(request):
             fileResponse = open(file.FilePath,"r")
             a = escape(fileResponse.read())
             return FileResponse(a)
-        except:
+        except Exception as e:
             errmsg = traceback.format_exc(limit=1)
             tb = traceback.format_tb(e.__traceback__)
             err = ApiModel.ErrorModel(msg=errmsg, trace=tb,module="Indexer")
