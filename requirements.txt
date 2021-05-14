@@ -7,3 +7,5 @@ redisgraph
 requests==2.24.0
 gunicorn==20.0.4
 djangorestframework
+whitenoise
+django-heroku
