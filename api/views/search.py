@@ -1,5 +1,6 @@
 import traceback
 from typing import Tuple
+import django_heroku
 from redisgraph.graph import Graph
 from repopy.settings import REDISEARCH_CLIENT, REDIS_INSTANCE, RESERVED_KEYWORDS, RESPONSE_ERROR, RESPONSE_SUCCESS
 from api.views import repository
@@ -474,12 +475,11 @@ def search(request):
             retr = jsons.dump(listResult,strict=False)
             return JsonResponse(retr,safe=False)
         except Exception as e:
-            errmsg = traceback.format_exc()
+            errmsg = traceback.format_exc(limit=1)
             tb = traceback.format_tb(e.__traceback__)
             err = ErrorModel(msg=errmsg, trace=tb,module="Indexer")
-            retrmodelerr = jsons.dump(err)
-            
-            print(errmsg)
+            retrmodelerr = jsons.dumps(err)
+            django_heroku.logging.error(retrmodelerr)
             resp = ResponseModel()
             resp.ResponseCode = RESPONSE_ERROR
             resp.ResponseMessage = "error"

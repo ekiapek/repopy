@@ -1,3 +1,4 @@
+import django_heroku
 from api.models import ApiModel
 from api.models.models import FileModel
 from datetime import date, datetime
@@ -53,12 +54,11 @@ def indexRepoDirectory(request):
                     retrmodel = jsons.dump(resp)
                     return JsonResponse(retrmodel,safe=False)
                 except Exception as e:
-                    errmsg = traceback.format_exc()
+                    errmsg = traceback.format_exc(limit=1)
                     tb = traceback.format_tb(e.__traceback__)
                     err = ErrorModel(msg=errmsg, trace=tb,module="Indexer")
-                    retrmodelerr = jsons.dump(err)
-                    
-                    print(errmsg)
+                    retrmodelerr = jsons.dumps(err)
+                    django_heroku.logging.error(retrmodelerr)
                     resp = ResponseModel()
                     resp.ResponseCode = RESPONSE_ERROR
                     resp.ResponseMessage = "error"
@@ -82,10 +82,11 @@ def indexRepo(request):
                     return JsonResponse(retrmodel,safe=False)
                 except Exception as e:
                     errmsg = traceback.format_exc(limit=1)
+                    errmsg = traceback.format_exc(limit=1)
                     tb = traceback.format_tb(e.__traceback__)
                     err = ErrorModel(msg=errmsg, trace=tb,module="Indexer")
-                    retrmodelerr = jsons.dump(err)
-                    print(retrmodelerr)
+                    retrmodelerr = jsons.dumps(err)
+                    django_heroku.logging.error(retrmodelerr)
                     resp = ResponseModel()
                     resp.ResponseCode = RESPONSE_ERROR
                     resp.ResponseMessage = "error"
@@ -166,8 +167,8 @@ def repoUpload(request):
                 errmsg = traceback.format_exc(limit=1)
                 tb = traceback.format_tb(e.__traceback__)
                 err = ErrorModel(msg=errmsg, trace=tb,module="Indexer")
-                retrmodelerr = jsons.dump(err)
-                print(retrmodelerr)
+                retrmodelerr = jsons.dumps(err)
+                django_heroku.logging.error(retrmodelerr)
                 retrmodel = jsons.dump(response)
                 return JsonResponse(retrmodel,safe=False)
 

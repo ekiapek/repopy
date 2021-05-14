@@ -1,4 +1,7 @@
 import re
+import traceback
+
+import django_heroku
 from api.models import Repositories, ApiModel
 from django.http import HttpResponse,JsonResponse, response
 import jsons
@@ -29,6 +32,11 @@ def getLatestIndexedRepository(request):
             retrmodel = jsons.dump(responseModel)
             return JsonResponse(retrmodel,safe=False)
     except Exception as e:
+        errmsg = traceback.format_exc(limit=1)
+        tb = traceback.format_tb(e.__traceback__)
+        err = ApiModel.ErrorModel(msg=errmsg, trace=tb,module="Indexer")
+        retrmodelerr = jsons.dumps(err)
+        django_heroku.logging.error(retrmodelerr)
         responseModel = ApiModel.ResponseModel()
         responseModel.ResponseCode = RESPONSE_ERROR
         responseModel.ResponseMessage = "Error getting repository"
