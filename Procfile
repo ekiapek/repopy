@@ -1,1 +1,1 @@
-web:gunicorn repopy.wsgi
+web: gunicorn repopy.wsgi
