@@ -146,7 +146,7 @@ REPO_RAW_PATH = "raw-repositories"
 REPO_EXTRACTED_PATH = "repositories"
 APPEND_SLASH = True
 MEDIA_ROOT = os.path.join(os.path.expanduser("~"), REPO_BASE_PATH)
-API_URL = "http://localhost:8080/api/"
+API_URL = "http://localhost:8081/api/"
 RESERVED_KEYWORDS = [":related-with",":parent-of",":child-of",":function",":in"]
 
 #redis
